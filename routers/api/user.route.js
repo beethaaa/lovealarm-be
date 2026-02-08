@@ -10,8 +10,26 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(verifyRoles(ROLE.ADMIN), getAllUsers)
-  .post(verifyRoles(ROLE.ADMIN), addUserByAdmin);
-router.route("/:id").delete(verifyRoles(ROLE.ADMIN), deleteUser);
+  .get(
+    // #swagger.tags = ['Users']
+    // #swagger.summary = 'Get all users'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    verifyRoles(ROLE.ADMIN),
+    getAllUsers,
+  )
+  .post(
+    // #swagger.tags = ['Users']
+    // #swagger.summary = 'Create a new user (Admin only)'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    verifyRoles(ROLE.ADMIN),
+    addUserByAdmin,
+  );
+router.route("/:id").delete(
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Delete a user by ID'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  verifyRoles(ROLE.ADMIN),
+  deleteUser,
+);
 
 module.exports = router;
