@@ -1,2 +1,2 @@
-# cinema-be
-This is backend for Cinema Management System project
+# lovealarm-be
+This is the backend for Love Alarm project
