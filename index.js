@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Hello World 2!");
 });
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
