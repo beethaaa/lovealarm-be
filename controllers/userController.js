@@ -60,4 +60,5 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Unexpected error occured!" });
   }
 };
+
 module.exports = { getAllUsers, deleteUser, addUserByAdmin };

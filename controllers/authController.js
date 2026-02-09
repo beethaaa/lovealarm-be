@@ -67,6 +67,7 @@ const handleLogin = async (req, res) => {
 
     const accessToken = jwt.sign(
       {
+        userId: matchUser._id,
         email: matchUser.email,
         roleKey: matchUser.roleKey,
       },

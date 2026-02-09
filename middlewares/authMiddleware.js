@@ -4,18 +4,16 @@ const verifyJwt = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401)
-        .json({ message: "You hasn't logged in!" });;
+    return res.status(401).json({ message: "You hasn't logged in!" });
   }
 
   const token = authHeader.split(" ")[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res
-        .status(401)
-        .json({ message: "Your token has expired!" });
+      return res.status(401).json({ message: "Your token has expired!" });
     }
+    req.userId = decoded.userId;
     req.email = decoded.email;
     req.roleKey = decoded.roleKey;
     next();
