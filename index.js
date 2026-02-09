@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => {
-  res.send("Hello World 2!");
+  res.send("Hello World!");
 });
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));

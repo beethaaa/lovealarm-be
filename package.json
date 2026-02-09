@@ -1,7 +1,7 @@
 {
-  "name": "cinema-be",
+  "name": "lovealarm-be",
   "version": "1.0.0",
-  "description": "This is backend for Cinema Management System project",
+  "description": "This is backend for Love Alarm project",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,7 +9,7 @@
     "swagger": "node swagger.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "beethaaa",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
