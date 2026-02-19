@@ -3,7 +3,7 @@ const {
   getAllUsers,
   deleteUser,
   addUserByAdmin,
-} = require("../../controllers/userController");
+} = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
 const router = express.Router();

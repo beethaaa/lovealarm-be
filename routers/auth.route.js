@@ -5,7 +5,7 @@ const {
   handleSignup,
   resetPassword,
   changePassword,
-} = require("../controllers/authController");
+} = require("../controllers/auth.controller");
 const { checkRequiredFields } = require("../middlewares");
 const verifyJwt = require("../middlewares/authMiddleware");
 const router = express.Router();

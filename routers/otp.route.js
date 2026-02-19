@@ -1,5 +1,5 @@
 const express = require("express");
-const { sendOtpByEmail, verifyOtp } = require("../controllers/optController");
+const { sendOtpByEmail, verifyOtp } = require("../controllers/opt.controller");
 const { checkRequiredFields } = require("../middlewares");
 const router = express.Router();
 
