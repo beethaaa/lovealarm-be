@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
+const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 
 // Tạo transporter để gửi email
 const transporter = nodemailer.createTransport({
@@ -57,8 +58,7 @@ const sendOtpByEmail = async (req, res) => {
 
     res.status(200).json({ message: "Check mail để lấy mã OTP!" });
   } catch (error) {
-    console.error(error);
-    res.status(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -97,7 +97,7 @@ const verifyOtp = async (req, res) => {
 
     res.status(200).json({ message: "Verify successfully." });
   } catch (error) {
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 

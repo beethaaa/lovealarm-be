@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { ROLE } = require("../constraints/role");
 const OTP = require("../models/OTP");
+const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 
 const handleSignup = async (req, res) => {
   const { email, password } = req.body;
@@ -25,8 +26,7 @@ const handleSignup = async (req, res) => {
       message: `Welcome ${email} as ${ROLE.USER.name}`,
     });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -75,9 +75,7 @@ const handleLogin = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    console.error(error);
-
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -113,9 +111,7 @@ const resetPassword = async (req, res) => {
 
     res.status(200).json({ message: "Change password successfully!" });
   } catch (error) {
-    console.error(error);
-
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -149,8 +145,7 @@ const resetPasswordByAdmin = async (req, res) => {
       .status(200)
       .json({ message: `${email} changed password successfully!` });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -198,8 +193,7 @@ const changePassword = async (req, res) => {
       .status(200)
       .json({ message: `${email} changed password successfully!` });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 

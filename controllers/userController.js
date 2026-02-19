@@ -1,4 +1,5 @@
 const { getRoleNameByKey } = require("../constraints/role");
+const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
@@ -7,8 +8,7 @@ const getAllUsers = async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Unexpected error occured!" });
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -39,8 +39,7 @@ const addUserByAdmin = async (req, res) => {
       message: `Welcome ${email} as ${getRoleNameByKey(roleKey)}`,
     });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    serverErrorMessageRes(res, error);
   }
 };
 
@@ -56,8 +55,7 @@ const deleteUser = async (req, res) => {
       .status(200)
       .json({ message: `Delete user ${user.email} successfully!` });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Unexpected error occured!" });
+    serverErrorMessageRes(res, error);
   }
 };
 
