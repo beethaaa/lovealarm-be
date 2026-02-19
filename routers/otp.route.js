@@ -1,0 +1,19 @@
+const express = require("express");
+const { sendOtpByEmail, verifyOtp } = require("../controllers/optController");
+const { checkRequiredFields } = require("../middlewares");
+const router = express.Router();
+
+router.route("/send").post(
+  // #swagger.tags = ['OTP']
+  // #swagger.summary = 'Request to send OTP through email'
+  checkRequiredFields("email"),
+  sendOtpByEmail,
+);
+router.route("/verify").post(
+  // #swagger.tags = ['OTP']
+  // #swagger.summary = 'Verify OTP'
+  checkRequiredFields("email", "otp"),
+  verifyOtp,
+);
+
+module.exports = router;

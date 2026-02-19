@@ -33,6 +33,7 @@ app.get("/", (req, res) => {
 });
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
+app.use("/otp", require("./routers/otp.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
