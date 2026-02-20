@@ -40,6 +40,7 @@ app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
 app.use("/api/ble-session", require("./routers/api/bleSession.route.js"));
 app.use("/api/couples", require("./routers/api/couple.route.js"));
+app.use("/api/couple-milestones", require("./routers/api/coupleMilestone.route.js"));
 
 app.use((req, res, next) => {
   res
