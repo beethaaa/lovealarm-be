@@ -13,7 +13,7 @@ const options = {
         description: "Online server",
       },
       {
-        url: "https://lovealarm-be.onrender.com",
+        url: "http://localhost:3800",
         description: "Local server",
       },
     ],
