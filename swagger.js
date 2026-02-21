@@ -10,7 +10,7 @@ const doc = {
   },
   servers: [
     {
-      url: "https://lovealarm-be.onrender.com",
+      url: "https://lovealarm-be-oqlx.onrender.com",
       description: "Online server",
     },
     {
