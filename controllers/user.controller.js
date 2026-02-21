@@ -31,6 +31,7 @@ const addUserByAdmin = async (req, res) => {
 
     await User.create({
       email,
+
       password: hashPass,
       roleKey,
     });
@@ -58,5 +59,58 @@ const deleteUser = async (req, res) => {
     serverErrorMessageRes(res, error);
   }
 };
+/*dedicated function for updating User profile*/
+const updateUserProfile = async (req,res) =>{
+  try{
+    const userId = req?.userId;
+    const updateDetail = req.body;
+    if(updateDetail.roleKey || updateDetail.mode || updateDetail.vip)
+      return res.status(403).json({message: `secured field detected(role, mode, vip) is prohibited when updating profile`})
 
-module.exports = { getAllUsers, deleteUser, addUserByAdmin };
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateDetail,
+      { runValidators: true}
+    )
+    console.log(`Updated User: ${updatedUser}`);
+    res.status(200).json({message: "User profile updated successfully!", updatedUser})
+  }catch(error){
+    serverErrorMessageRes(req,res)
+  }
+}
+
+const updatePassword = async (req,res)=>{
+  const userId = req?.userId;
+  const {oldPassword, newPassword} = req.body;
+  if(!oldPassword || !newPassword){
+    return res.status(403).json({message: "Old password and new password are required!"})
+  }
+
+  if(oldPassword === newPassword){
+    return res.status(403).json({message: "New password must be different from old password!"})
+  }
+
+  try{
+    const user = await User.findById(userId);
+    if(!user){
+      return res.status(404).json({message: `Not found user with id ${userId}!`})
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if(!isMatch){
+      return res.status(403).json({message: "Old password is incorrect!"})
+    }
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashNewPassword;
+    await user.save();
+    
+    
+  }
+
+
+
+}
+
+module.exports = { getAllUsers, deleteUser, addUserByAdmin, updateUserProfile };
+
+

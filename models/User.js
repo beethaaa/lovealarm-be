@@ -26,6 +26,7 @@ const UserSchema = new Schema(
     },
 
     profile: {
+      name: {type:String, default: ''},
       gender: { type: Number, default: GENDER.MALE },
       birthday: { type: Date },
       interest: { type: [String], default: [] },
