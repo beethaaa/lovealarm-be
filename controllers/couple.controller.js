@@ -22,26 +22,30 @@ const acceptCoupleMode = async (req, res) => {
     await session.withTransaction(async () => {
       const dupplicate = await Couple.findOne({ users: userId });
       if (dupplicate)
-        return res
-          .status(400)
-          .json({ message: "You are in couple with other!" });
+        throw {
+          status: 400,
+          message: "You are in couple with other!",
+        };
 
       const coupleInMatches = await Match.findOne({ users: userId });
       if (!coupleInMatches)
-        return res
-          .status(400)
-          .json({ message: "You have not sent a love request yet!" });
+        throw {
+          status: 400,
+          message: "You have not sent a love request yet!",
+        };
 
       if (coupleInMatches.matchStatus !== MatchStatus.MATCHED)
-        return res
-          .status(400)
-          .json({ message: "Your love request has not been accepted yet!" });
+        throw {
+          status: 400,
+          message: "Your love request has not been accepted yet!",
+        };
 
       if (!couples[toUserId]) {
         couples[userId] = toUserId;
-        return res
-          .status(200)
-          .json({ message: "Wait for your partner accepting..." });
+        throw {
+          status: 200,
+          message: "Wait for your partner accepting...",
+        };
       }
 
       await Couple.create({
@@ -69,56 +73,78 @@ const acceptCoupleMode = async (req, res) => {
 
     res.status(200).json({ message: "Welcome to Couple Mode!" });
   } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+
     serverErrorMessageRes(res, error);
+  } finally {
+    session.endSession();
   }
 };
+
 const leaveCoupleMode = async (req, res) => {
   const session = await mongoose.startSession();
+
   try {
     const userId = req.userId;
 
     await session.withTransaction(async () => {
-      const currentCouple = await Couple.findOne({ users: userId });
-      if (!currentCouple)
-        return res
-          .status(400)
-          .json({ message: "You are not in couple mode with anyone!" });
-
-      const coupleInMatches = await Match.findOne({
-        users: { $all: currentCouple.users },
+      const currentCouple = await Couple.findOne({ users: userId }, null, {
+        session,
       });
-      if (!coupleInMatches)
-        return res.status(409).json({
+
+      if (!currentCouple) {
+        throw {
+          status: 400,
+          message: "You are not in couple mode with anyone!",
+        };
+      }
+
+      const coupleInMatches = await Match.findOne(
+        { users: { $all: currentCouple.users } },
+        null,
+        { session },
+      );
+
+      if (!coupleInMatches) {
+        throw {
+          status: 409,
           message: "Cannot find couple in Match table! Contact admin for help!",
-        });
+        };
+      }
 
-      if (coupleInMatches.matchStatus !== MatchStatus.COUPLED)
-        return res.status(400).json({ message: "You are not in couple mode!" });
+      if (coupleInMatches.matchStatus !== MatchStatus.COUPLED) {
+        throw {
+          status: 400,
+          message: "You are not in couple mode!",
+        };
+      }
 
-      await Couple.deleteOne({ _id: currentCouple._id });
+      await Couple.deleteOne({ _id: currentCouple._id }, { session });
 
       await Match.updateOne(
-        { users: { $all: currentCouple.users } },
-        {
-          $set: {
-            matchStatus: MatchStatus.ENDED,
-          },
-        },
+        { _id: coupleInMatches._id },
+        { $set: { matchStatus: MatchStatus.ENDED } },
+        { session },
       );
 
       await User.updateMany(
         { _id: { $in: currentCouple.users } },
-        {
-          $set: {
-            mode: MODE.COUPLE,
-          },
-        },
+        { $set: { mode: MODE.SINGLE } },
+        { session },
       );
     });
 
     res.status(200).json({ message: "Welcome to Single Mode!" });
   } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+
     serverErrorMessageRes(res, error);
+  } finally {
+    session.endSession();
   }
 };
 
