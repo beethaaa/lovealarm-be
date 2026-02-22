@@ -63,7 +63,7 @@ const acceptCoupleMode = async (req, res) => {
         { _id: { $in: currentCouple.users } },
         {
           $set: {
-            mode: MODE.COUPLE,
+            mode: MODE.COUPLE.key,
           },
         },
       );
@@ -131,7 +131,7 @@ const leaveCoupleMode = async (req, res) => {
 
       await User.updateMany(
         { _id: { $in: currentCouple.users } },
-        { $set: { mode: MODE.SINGLE } },
+        { $set: { mode: MODE.SINGLE.key } },
         { session },
       );
     });
