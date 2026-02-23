@@ -2,10 +2,44 @@ const { getRoleNameByKey } = require("../constraints/role");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
+
+/**************************
+ * Return an object in format:
+ *  updateData: {
+ *    profile.name:"John Doe",
+ *    profile.age: 20,
+ *    profile.interest: ["Swimming", "Basketball"]
+ * }
+ *
+ * this will ensure the code to not delete unmentioned field when using findByIdAndUpdate()
+ *
+ ****************************/
+const buildUpdateObject = (updateDetail, notAllowedField) => {
+  const updateData = {};
+
+  for (const key in updateDetail) {
+    if (notAllowedField.includes(key))
+      throw new Error(`secured field detected: ${key} is prohibited`);
+    const value = updateDetail[key];
+    if (Array.isArray(value)) {
+      updateData[key] = value;
+    } else if (typeof value === "object" && value !== null) {
+      for (const nestedKey in value) {
+        // if (notAllowedField[key].includes(nestedKey))
+        updateData[`${key}.${nestedKey}`] = value[nestedKey];
+      }
+    } else {
+      updateData[key] = value;
+    }
+  }
+
+  return updateData;
+};
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password -__v").lean();
     res.status(200).json(users);
   } catch (error) {
     serverErrorMessageRes(res, error);
@@ -31,7 +65,6 @@ const addUserByAdmin = async (req, res) => {
 
     await User.create({
       email,
-
       password: hashPass,
       roleKey,
     });
@@ -47,6 +80,12 @@ const addUserByAdmin = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const id = req.params?.id;
+
+    // Validate MongoDB ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: `Invalid user ID format: ${id}` });
+    }
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: `Not found user with id ${id}!` });
@@ -59,58 +98,105 @@ const deleteUser = async (req, res) => {
     serverErrorMessageRes(res, error);
   }
 };
+
 /*dedicated function for updating User profile*/
-const updateUserProfile = async (req,res) =>{
-  try{
-    const userId = req?.userId;
+const updateUserProfile = async (req, res) => {
+  const notAllowedField = ["role", "mode", "vip", "password"];
+
+  try {
+    const userId = req.userId;
     const updateDetail = req.body;
-    if(updateDetail.roleKey || updateDetail.mode || updateDetail.vip)
-      return res.status(403).json({message: `secured field detected(role, mode, vip) is prohibited when updating profile`})
+    const updateData = buildUpdateObject(updateDetail, notAllowedField);
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      updateDetail,
-      { runValidators: true}
-    )
+      { $set: updateData },
+      { runValidators: true },
+    );
     console.log(`Updated User: ${updatedUser}`);
-    res.status(200).json({message: "User profile updated successfully!", updatedUser})
-  }catch(error){
-    serverErrorMessageRes(req,res)
+    res
+      .status(200)
+      .json({ message: "User profile updated successfully!", updatedUser });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
   }
-}
+};
 
-const updatePassword = async (req,res)=>{
+const updatePassword = async (req, res) => {
   const userId = req?.userId;
-  const {oldPassword, newPassword} = req.body;
-  if(!oldPassword || !newPassword){
-    return res.status(403).json({message: "Old password and new password are required!"})
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    return res
+      .status(403)
+      .json({ message: "Old password and new password are required!" });
   }
 
-  if(oldPassword === newPassword){
-    return res.status(403).json({message: "New password must be different from old password!"})
+  if (oldPassword === newPassword) {
+    return res
+      .status(403)
+      .json({ message: "New password must be different from old password!" });
   }
 
-  try{
+  try {
     const user = await User.findById(userId);
-    if(!user){
-      return res.status(404).json({message: `Not found user with id ${userId}!`})
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: `Not found user with id ${userId}!` });
     }
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if(!isMatch){
-      return res.status(403).json({message: "Old password is incorrect!"})
+    if (!isMatch) {
+      return res.status(403).json({ message: "Old password is incorrect!" });
     }
 
     const hashNewPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashNewPassword;
     await user.save();
-    
-    
+
+    res.status(200).json({ message: "Password updated successfully!" });
+  } catch (error) {
+    serverErrorMessageRes(req, res);
   }
+};
 
+const updateRole = async (req, res) => {
+  try {
+    const userId = req?.userId;
+    const { role } = req.body;
 
+    const user = await User.findByIdAndUpdate(userId, {
+      $set: { roleKey: role.key },
+    });
+    console.log(`Update role: ${user}`);
+    res
+      .status(200)
+      .json({ message: "User role updated successfully!", updatedUser: user });
+  } catch (error) {
+    serverErrorMessageRes(req, res);
+  }
+};
 
-}
+const updateVip = async (req, res) => {
+  try {
+    const userId = req?.userId;
+    const { vip } = req.body;
+    const user = await User.findByIdAndUpdate(userId, { $set: { vip } });
+    console.log(`Update vip: ${user}`);
+    res.status(200).json({
+      message: "User VIP status updated successfully!",
+      updatedVip: vip,
+    });
+  } catch (error) {
+    serverErrorMessageRes(req, res);
+  }
+};
 
-module.exports = { getAllUsers, deleteUser, addUserByAdmin, updateUserProfile };
-
-
+module.exports = {
+  getAllUsers,
+  deleteUser,
+  addUserByAdmin,
+  updateUserProfile,
+  updatePassword,
+  updateRole,
+  updateVip,
+};

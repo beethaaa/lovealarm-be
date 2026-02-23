@@ -42,6 +42,7 @@ app.use("/api/ble-session", require("./routers/api/bleSession.route.js"));
 app.use("/api/couples", require("./routers/api/couple.route.js"));
 app.use("/api/couple-milestones", require("./routers/api/coupleMilestone.route.js"));
 
+
 app.use((req, res, next) => {
   res
     .status(404)
@@ -52,3 +53,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
   console.log(`Swagger at http://localhost:${PORT}/api-docs`);
 });
+
