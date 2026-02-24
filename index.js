@@ -50,6 +50,7 @@ app.use(
 );
 app.use("/api/challenges", require("./routers/api/challenge.router.js"));
 
+
 app.use((req, res, next) => {
   res
     .status(404)
@@ -60,3 +61,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
   console.log(`Swagger at http://localhost:${PORT}/api-docs`);
 });
+
