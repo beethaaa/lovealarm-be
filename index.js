@@ -35,13 +35,13 @@ app.get("/", (req, res) => {
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
 
+// verify jwt
+app.use(verifyJwt);
 app.use("/api/ble-session", require("./routers/api/bleSession.route.js"));
 app.use(
   "/api/suggest-friends",
   require("./routers/api/suggestFriend.route.js"),
 );
-// verify jwt
-app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
 app.use("/api/couples", require("./routers/api/couple.route.js"));
 app.use(
@@ -49,7 +49,6 @@ app.use(
   require("./routers/api/coupleMilestone.route.js"),
 );
 app.use("/api/challenges", require("./routers/api/challenge.router.js"));
-
 
 app.use((req, res, next) => {
   res
@@ -61,4 +60,3 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
   console.log(`Swagger at http://localhost:${PORT}/api-docs`);
 });
-

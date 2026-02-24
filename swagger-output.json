@@ -250,6 +250,87 @@
         }
       }
     },
+    "/api/ble-session/": {
+      "post": {
+        "tags": [
+          "BleSession"
+        ],
+        "summary": "Create a new ble session (User only)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bleUuid": {
+                    "example": "any"
+                  },
+                  "platform": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/suggest-friends/": {
+      "post": {
+        "tags": [
+          "Suggest Friends"
+        ],
+        "summary": "Get a list of nearby friends based on array of nearby bleUuid",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bleUuids": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users/": {
       "get": {
         "tags": [
@@ -845,48 +926,6 @@
         ]
       }
     },
-    "/api/ble-session/": {
-      "post": {
-        "tags": [
-          "BleSession"
-        ],
-        "summary": "Create a new ble session (User only)",
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "bleUuid": {
-                    "example": "any"
-                  },
-                  "platform": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/couples/accept": {
       "post": {
         "tags": [
@@ -1285,45 +1324,6 @@
                   "expiredAt": {
                     "type": "string",
                     "format": "date-time"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/suggest-friends/": {
-      "post": {
-        "tags": [
-          "Suggest Friends"
-        ],
-        "summary": "Get a list of nearby friends based on array of nearby bleUuid",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "bleUuids": {
-                    "example": "any"
                   }
                 }
               }
