@@ -50,6 +50,7 @@ app.use(
   require("./routers/api/suggestFriend.route.js"),
 );
 
+
 app.use((req, res, next) => {
   res
     .status(404)
@@ -60,3 +61,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
   console.log(`Swagger at http://localhost:${PORT}/api-docs`);
 });
+
