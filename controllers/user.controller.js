@@ -20,7 +20,7 @@ const buildUpdateObject = (updateDetail, notAllowedField) => {
 
   for (const key in updateDetail) {
     if (notAllowedField.includes(key))
-      throw new Error(`secured field detected: ${key} is prohibited`);
+     return { error: `Field ${key} is not allowed to update!` };
     const value = updateDetail[key];
     if (Array.isArray(value)) {
       updateData[key] = value;
@@ -107,11 +107,13 @@ const updateUserProfile = async (req, res) => {
     const userId = req.userId;
     const updateDetail = req.body;
     const updateData = buildUpdateObject(updateDetail, notAllowedField);
-
+    if (updateData.error) 
+      return res.status(403).json({ message: updateData.error });
+  
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
-      { runValidators: true },
+      { runValidators: true, new: true },
     );
     console.log(`Updated User: ${updatedUser}`);
     res
