@@ -1331,6 +1331,67 @@
           }
         }
       }
+    },
+    "/api/love-request/": {
+      "get": {
+        "tags": [
+          "Love Request"
+        ],
+        "summary": "Get love requests received by the authenticated user",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Love Request"
+        ],
+        "summary": "Create a new love request to another user",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "toUserId": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109ca"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
