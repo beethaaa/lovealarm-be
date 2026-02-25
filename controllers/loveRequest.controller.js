@@ -1,3 +1,7 @@
+const {
+  LoveRequestStatus,
+  isValidLoveRequestStatus,
+} = require("../constraints/loveRequestStatus");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const LoveRequest = require("../models/LoveRequest");
 
@@ -25,11 +29,20 @@ const createLoveRequest = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "toUserId is required!" });
+    const duplicatedLoveRequest = await LoveRequest.findOne({
+      fromUserId: fromUserId,
+      toUserId: toUserId,
+    });
+    if (duplicatedLoveRequest)
+      return res.status(400).json({
+        success: false,
+        message: "You have already sent a love request to this user!",
+      });
+
     const createdLoveRequest = await LoveRequest.create({
       fromUserId: fromUserId,
       toUserId: toUserId,
     });
-
     return res.status(201).json({
       success: true,
       message: "Love request created successfully!",
@@ -40,6 +53,133 @@ const createLoveRequest = async (req, res) => {
   }
 };
 
-const editLoveRequest = async (req, res) => {};
+const updateStatus = async (loveRequestId, status) => {
+  const updatedLoveRequest = await LoveRequest.findByIdAndUpdate(
+    loveRequestId,
+    { status: status },
+    { new: true },
+  );
 
-module.exports = { getLoveRequest, createLoveRequest };
+  return updatedLoveRequest;
+};
+
+const editLoveRequest = async (req, res) => {
+  try {
+    const { loveRequestId, status } = req.body;
+    const userId = req.userId;
+
+    if (!loveRequestId)
+      return res
+        .status(400)
+        .json({ success: false, message: "loveRequestId is required!" });
+
+    if (!status)
+      return res
+        .status(400)
+        .json({ success: false, message: "status is required!" });
+    const existedLoveRequest = await LoveRequest.findById(loveRequestId);
+    if (!existedLoveRequest)
+      return res
+        .status(404)
+        .json({ success: false, message: "Love request not found!" });
+    if (
+      existedLoveRequest.toUserId.toString() !== userId &&
+      existedLoveRequest.fromUserId.toString() !== userId
+    )
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to edit this love request!",
+      });
+    if (!isValidLoveRequestStatus(status))
+      return res.status(400).json({
+        success: false,
+        message: `Invalid love request status! Must be one of: ${Object.values(LoveRequestStatus).join(", ")}`,
+      });
+    const updatedLoveRequest = await updateStatus(loveRequestId, status);
+    return res.status(200).json({
+      success: true,
+      message: "Love request updated successfully!",
+      data: updatedLoveRequest,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const acceptLoveRequest = async (req, res, loveRequestId) => {
+  try {
+    const updatedLoveRequest = await updateStatus(
+      loveRequestId,
+      LoveRequestStatus.WAITING_START,
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Love request accepted successfully!",
+      data: updatedLoveRequest,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const rejectLoveRequest = async (req, res, loveRequestId) => {
+  try {
+    const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
+    if (deleted.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Love request not found!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Love request rejected successfully!",
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const responseToLoveRequest = async (req, res) => {
+  try {
+    const { isAccepted, loveRequestId } = req.body;
+    const userId = req.userId;
+
+    const existedLoveRequest = await LoveRequest.findById(loveRequestId);
+    if (!existedLoveRequest)
+      return res
+        .status(404)
+        .json({ success: false, message: "Love request not found!" });
+    if (existedLoveRequest.toUserId.toString() !== userId)
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to edit this love request!",
+      });
+    if(existedLoveRequest.status !== LoveRequestStatus.PENDING)
+      return res.status(400).json({
+        success: false,
+        message: "Love request is not in pending status!",
+      });
+
+    switch (isAccepted) {
+      case true:
+        return await acceptLoveRequest(req, res, loveRequestId);
+      case false:
+        return await rejectLoveRequest(req, res, loveRequestId);
+      default:
+        return res.status(400).json({
+          success: false,
+          message: "Invalid isAccepted value!",
+        });
+    }
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+module.exports = {
+  getLoveRequest,
+  createLoveRequest,
+  editLoveRequest,
+  responseToLoveRequest,
+};

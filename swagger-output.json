@@ -1360,8 +1360,8 @@
         "summary": "Create a new love request to another user",
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
@@ -1385,6 +1385,109 @@
                   "toUserId": {
                     "type": "string",
                     "example": "60d0fe4f5311236168a109ca"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Love Request"
+        ],
+        "summary": "Update the status of a love request",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "loveRequestId": {
+                    "type": "string",
+                    "example": "699da49ae5596118b557aad6"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Possible values: PENDING, WAITING_START, WAITING_REPLY",
+                    "enum": [
+                      "PENDING",
+                      "WAITING_START",
+                      "WAITING_REPLY"
+                    ],
+                    "example": "PENDING"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/love-request/accept": {
+      "put": {
+        "tags": [
+          "Love Request"
+        ],
+        "summary": "Response to a love request",
+        "description": "",
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "loveRequestId": {
+                    "type": "string",
+                    "example": "699da49ae5596118b557aad6"
+                  },
+                  "isAccepted": {
+                    "type": "boolean",
+                    "example": true
                   }
                 }
               }
