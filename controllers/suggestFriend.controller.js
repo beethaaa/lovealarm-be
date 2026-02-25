@@ -29,8 +29,9 @@ const getSuggestFriendList = async (req, res) => {
     res.status(200).json({
       total: users.length,
       users: users.map((item) => ({
+        name: item.profile.name,
+        interests: item.profile.interest,
         userId: item._id,
-        bleSessionUuid: item.bleUuid,
         avatarUrl: item.avatarUrl,
         gender: item.profile?.gender,
       })),
