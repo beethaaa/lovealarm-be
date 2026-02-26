@@ -44,7 +44,7 @@ router
   )
   .put(
     // #swagger.tags = ['Love Request']
-    // #swagger.summary = 'Update the status of a love request
+    // #swagger.summary = 'Update the status of a love request'
     // #swagger.security = [{ "bearerAuth": [] }]
     /* #swagger.requestBody = {
       required: true,

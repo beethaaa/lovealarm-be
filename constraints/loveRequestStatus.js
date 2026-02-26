@@ -5,7 +5,7 @@ const LoveRequestStatus = {
 };
 
 const isValidLoveRequestStatus = (status) => {
-  return Object.values(LoveRequestStatus).includes(status)
-}
+  return Object.values(LoveRequestStatus).includes(status);
+};
 
-module.exports = {LoveRequestStatus, isValidLoveRequestStatus}
+module.exports = { LoveRequestStatus, isValidLoveRequestStatus };

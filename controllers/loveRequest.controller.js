@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const {
   LoveRequestStatus,
   isValidLoveRequestStatus,
@@ -29,6 +31,12 @@ const createLoveRequest = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "toUserId is required!" });
+
+    if (fromUserId === toUserId)
+      return res.status(400).json({
+        success: false,
+        message: "You cannot send a love request to yourself!",
+      });
     const duplicatedLoveRequest = await LoveRequest.findOne({
       fromUserId: fromUserId,
       toUserId: toUserId,
@@ -54,6 +62,11 @@ const createLoveRequest = async (req, res) => {
 };
 
 const updateStatus = async (loveRequestId, status) => {
+  if (!loveRequestId)
+    return res
+      .status(400)
+      .json({ success: false, message: "loveRequestId is required!" });
+
   const updatedLoveRequest = await LoveRequest.findByIdAndUpdate(
     loveRequestId,
     { status: status },
@@ -144,7 +157,29 @@ const responseToLoveRequest = async (req, res) => {
   try {
     const { isAccepted, loveRequestId } = req.body;
     const userId = req.userId;
-
+    // Validate required fields before proceeding with business logic
+    if (
+      loveRequestId === undefined ||
+      loveRequestId === null ||
+      loveRequestId === ""
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "loveRequestId is required!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(loveRequestId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid loveRequestId format!",
+      });
+    }
+    if (typeof isAccepted !== "boolean") {
+      return res.status(400).json({
+        success: false,
+        message: "isAccepted must be a boolean value!",
+      });
+    }
     const existedLoveRequest = await LoveRequest.findById(loveRequestId);
     if (!existedLoveRequest)
       return res
@@ -155,7 +190,7 @@ const responseToLoveRequest = async (req, res) => {
         success: false,
         message: "You are not allowed to edit this love request!",
       });
-    if(existedLoveRequest.status !== LoveRequestStatus.PENDING)
+    if (existedLoveRequest.status !== LoveRequestStatus.PENDING)
       return res.status(400).json({
         success: false,
         message: "Love request is not in pending status!",
