@@ -49,6 +49,11 @@ app.use(
   require("./routers/api/coupleMilestone.route.js"),
 );
 app.use("/api/challenges", require("./routers/api/challenge.router.js"));
+app.use(
+  "/api/suggest-friends",
+  require("./routers/api/suggestFriend.route.js"),
+);
+app.use("/api/love-request", require("./routers/api/loveRequest.route.js"));
 
 app.use((req, res, next) => {
   res
