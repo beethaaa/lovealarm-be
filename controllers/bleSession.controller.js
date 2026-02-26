@@ -4,8 +4,11 @@ const BleSession = require("../models/BleSession");
 const createBleSession = async (req, res) => {
   try {
     const { bleUuid, platform } = req.body;
+    const userId = req.userId;
 
-    await BleSession.create({ bleUuid, platform, userId: req.userId });
+    await BleSession.deleteMany({ userId });
+
+    await BleSession.create({ bleUuid, platform, userId });
 
     res.sendStatus(201);
   } catch (error) {
