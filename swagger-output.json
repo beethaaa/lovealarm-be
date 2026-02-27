@@ -732,6 +732,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
           }
         },
         "security": [
