@@ -19,6 +19,7 @@ router.route("/logout").post(
 router.route("/change-pass").post(
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'Change password (require login)'
+  // #swagger.security = [{ "bearerAuth": [] }]
   verifyJwt,
   checkRequiredFields("oldPassword", "newPassword"),
   changePassword,
