@@ -93,7 +93,7 @@ const getCurrentlyLoggedInUser = async (req, res) => {
         message: "Unexpected error, no ID retrieved from current user",
       });
     }
-    const currentUser = await User.findById(userId);
+    const currentUser = await User.findById(userId).select("-password -__v").lean();
     return res.status(200).json({
       success: true,
       data: currentUser,
@@ -175,6 +175,18 @@ const updateUserProfile = async (req, res) => {
   try {
     const userId = req.userId;
     const updateDetail = req.body;
+
+    const existedEmailList = await User.find({"_id" : { $ne: userId}}).select("email").lean();
+
+    const isDuplicateEmail = existedEmailList.some(user => user.email === updateDetail.email);
+
+    if (isDuplicateEmail) {
+      return res.status(409).json({
+        success: false,
+        message: "Email is already in use!",
+      });
+    }
+
     const updateData = buildUpdateObject(updateDetail, notAllowedField);
     if (updateData.error)
       return res
