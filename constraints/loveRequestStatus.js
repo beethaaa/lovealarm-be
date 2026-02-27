@@ -4,4 +4,8 @@ const LoveRequestStatus = {
   WAITING_REPLY: "WAITING_REPLY",
 };
 
-module.exports = LoveRequestStatus
+const isValidLoveRequestStatus = (status) => {
+  return Object.values(LoveRequestStatus).includes(status);
+};
+
+module.exports = { LoveRequestStatus, isValidLoveRequestStatus };
