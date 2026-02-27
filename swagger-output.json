@@ -61,6 +61,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1332,45 +1337,6 @@
         }
       }
     },
-    "/api/suggest-friends/": {
-      "post": {
-        "tags": [
-          "Suggest Friends"
-        ],
-        "summary": "Get a list of nearby friends based on array of nearby bleUuid",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "bleUuids": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/love-request/": {
       "get": {
         "tags": [
@@ -1533,6 +1499,50 @@
             }
           }
         }
+      }
+    },
+    "/api/statistics/gender-age-mode": {
+      "get": {
+        "tags": [
+          "Statistic"
+        ],
+        "summary": "Get statistic group by age, gender, mode",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/statistics/active-users": {
+      "get": {
+        "tags": [
+          "Statistic"
+        ],
+        "summary": "Get statistic of active users",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

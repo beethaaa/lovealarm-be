@@ -71,6 +71,11 @@ const handleLogin = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    await User.updateOne(
+      { _id: matchUser._id },
+      { $set: { lastLogin: new Date() } },
+    );
+
     res.status(200).json({
       accessToken,
     });
