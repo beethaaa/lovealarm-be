@@ -61,6 +61,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -336,101 +341,181 @@
         "tags": [
           "Users"
         ],
-        "summary": "Get all users",
+        "summary": "Get all users with pagination and filters",
         "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "recordPerPage",
+            "in": "query",
+            "description": "Records per page (default: 10)",
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search by user name",
+            "example": "John",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "description": "Filter by active status",
+            "example": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "roleKey",
+            "in": "query",
+            "description": "Filter by role keys (array)",
+            "example": [
+              "1",
+              "2"
+            ],
+            "schema": {
+              "type": "array"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of users",
+            "description": "List of users with pagination",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "1": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string",
-                        "example": "user@example.com"
-                      },
-                      "roleKey": {
-                        "type": "number",
-                        "example": 1
-                      },
-                      "avatarUrl": {
-                        "type": "string",
-                        "example": "https://example.com/avatar.jpg"
-                      },
-                      "profile": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "totalRecords": {
+                      "type": "number",
+                      "example": 21
+                    },
+                    "totalPages": {
+                      "type": "number",
+                      "example": 3
+                    },
+                    "currentPage": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
                         "properties": {
-                          "name": {
+                          "_id": {
                             "type": "string",
-                            "example": "John Doe"
+                            "example": "507f1f77bcf86cd799439011"
                           },
-                          "gender": {
+                          "email": {
                             "type": "string",
-                            "example": "male"
+                            "example": "user@example.com"
                           },
-                          "birthday": {
+                          "roleKey": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "avatarUrl": {
                             "type": "string",
-                            "example": "1990-01-15"
+                            "example": "https://example.com/avatar.jpg"
                           },
-                          "interests": {
-                            "type": "array",
-                            "example": [
-                              "music",
-                              "travel"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "personalityTags": {
-                            "type": "array",
-                            "example": [
-                              "outgoing",
-                              "creative"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "setting": {
-                        "type": "object",
-                        "properties": {
-                          "bleScanEnabled": {
+                          "active": {
                             "type": "boolean",
                             "example": true
                           },
-                          "vibrationEnabled": {
-                            "type": "boolean",
-                            "example": false
+                          "profile": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "John Doe"
+                              },
+                              "gender": {
+                                "type": "string",
+                                "example": "male"
+                              },
+                              "birthday": {
+                                "type": "string",
+                                "example": "1990-01-15"
+                              },
+                              "interests": {
+                                "type": "array",
+                                "example": [
+                                  "music",
+                                  "travel"
+                                ],
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "personalityTags": {
+                                "type": "array",
+                                "example": [
+                                  "outgoing",
+                                  "creative"
+                                ],
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
-                          "companionModeEnabled": {
-                            "type": "boolean",
-                            "example": true
-                          }
-                        }
-                      },
-                      "mode": {
-                        "type": "string",
-                        "example": "SINGLE"
-                      },
-                      "vip": {
-                        "type": "object",
-                        "properties": {
-                          "isActive": {
-                            "type": "boolean",
-                            "example": false
+                          "setting": {
+                            "type": "object",
+                            "properties": {
+                              "bleScanEnabled": {
+                                "type": "boolean",
+                                "example": true
+                              },
+                              "vibrationEnabled": {
+                                "type": "boolean",
+                                "example": false
+                              },
+                              "companionModeEnabled": {
+                                "type": "boolean",
+                                "example": true
+                              }
+                            }
                           },
-                          "expiredAt": {
+                          "mode": {
                             "type": "string",
-                            "example": "2025-12-31T23:59:59Z"
+                            "example": "SINGLE"
+                          },
+                          "vip": {
+                            "type": "object",
+                            "properties": {
+                              "isActive": {
+                                "type": "boolean",
+                                "example": false
+                              },
+                              "expiredAt": {
+                                "type": "string",
+                                "example": "2025-12-31T23:59:59Z"
+                              }
+                            }
                           }
                         }
                       }
@@ -443,93 +528,123 @@
               },
               "application/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "1": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string",
-                        "example": "user@example.com"
-                      },
-                      "roleKey": {
-                        "type": "number",
-                        "example": 1
-                      },
-                      "avatarUrl": {
-                        "type": "string",
-                        "example": "https://example.com/avatar.jpg"
-                      },
-                      "profile": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "totalRecords": {
+                      "type": "number",
+                      "example": 21
+                    },
+                    "totalPages": {
+                      "type": "number",
+                      "example": 3
+                    },
+                    "currentPage": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
                         "properties": {
-                          "name": {
+                          "_id": {
                             "type": "string",
-                            "example": "John Doe"
+                            "example": "507f1f77bcf86cd799439011"
                           },
-                          "gender": {
+                          "email": {
                             "type": "string",
-                            "example": "male"
+                            "example": "user@example.com"
                           },
-                          "birthday": {
+                          "roleKey": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "avatarUrl": {
                             "type": "string",
-                            "example": "1990-01-15"
+                            "example": "https://example.com/avatar.jpg"
                           },
-                          "interests": {
-                            "type": "array",
-                            "example": [
-                              "music",
-                              "travel"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          "personalityTags": {
-                            "type": "array",
-                            "example": [
-                              "outgoing",
-                              "creative"
-                            ],
-                            "items": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "setting": {
-                        "type": "object",
-                        "properties": {
-                          "bleScanEnabled": {
+                          "active": {
                             "type": "boolean",
                             "example": true
                           },
-                          "vibrationEnabled": {
-                            "type": "boolean",
-                            "example": false
+                          "profile": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "John Doe"
+                              },
+                              "gender": {
+                                "type": "string",
+                                "example": "male"
+                              },
+                              "birthday": {
+                                "type": "string",
+                                "example": "1990-01-15"
+                              },
+                              "interests": {
+                                "type": "array",
+                                "example": [
+                                  "music",
+                                  "travel"
+                                ],
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "personalityTags": {
+                                "type": "array",
+                                "example": [
+                                  "outgoing",
+                                  "creative"
+                                ],
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
-                          "companionModeEnabled": {
-                            "type": "boolean",
-                            "example": true
-                          }
-                        }
-                      },
-                      "mode": {
-                        "type": "string",
-                        "example": "SINGLE"
-                      },
-                      "vip": {
-                        "type": "object",
-                        "properties": {
-                          "isActive": {
-                            "type": "boolean",
-                            "example": false
+                          "setting": {
+                            "type": "object",
+                            "properties": {
+                              "bleScanEnabled": {
+                                "type": "boolean",
+                                "example": true
+                              },
+                              "vibrationEnabled": {
+                                "type": "boolean",
+                                "example": false
+                              },
+                              "companionModeEnabled": {
+                                "type": "boolean",
+                                "example": true
+                              }
+                            }
                           },
-                          "expiredAt": {
+                          "mode": {
                             "type": "string",
-                            "example": "2025-12-31T23:59:59Z"
+                            "example": "SINGLE"
+                          },
+                          "vip": {
+                            "type": "object",
+                            "properties": {
+                              "isActive": {
+                                "type": "boolean",
+                                "example": false
+                              },
+                              "expiredAt": {
+                                "type": "string",
+                                "example": "2025-12-31T23:59:59Z"
+                              }
+                            }
                           }
                         }
                       }
@@ -682,6 +797,31 @@
             }
           }
         }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get currently logged in user profile",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/password": {
@@ -1324,45 +1464,6 @@
                   "expiredAt": {
                     "type": "string",
                     "format": "date-time"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/suggest-friends/": {
-      "post": {
-        "tags": [
-          "Suggest Friends"
-        ],
-        "summary": "Get a list of nearby friends based on array of nearby bleUuid",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "bleUuids": {
-                    "example": "any"
                   }
                 }
               }

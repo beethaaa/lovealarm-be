@@ -37,13 +37,66 @@ const buildUpdateObject = (updateDetail, notAllowedField) => {
   return updateData;
 };
 
-const getAllUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password -__v").lean();
+    const {
+      page = 1,
+      recordPerPage = 10,
+      active,
+      keyword,
+      roleKey,
+    } = req.query;
+    const pageNumber = Math.max(parseInt(page, 10) || 1, 1); //rewind to page 1 if invalid number provided
+    const perPage = Math.max(parseInt(recordPerPage, 10) || 10, 1); //rewind to 10 records per page if invalid number provided
+    const skip = (pageNumber - 1) * perPage;
+    const filter = {};
+
+    if (keyword) {
+      filter["profile.name"] = { $regex: keyword, $options: "i" };
+    }
+    if (active !== undefined && active !== null) {
+      filter["active"] = JSON.parse(active);
+    }
+    if (roleKey && roleKey.length > 0 && roleKey[0] !== null) {
+      filter["roleKey"] = { $in: roleKey };
+    }
+    filter["_id"] = { $ne: req.userId };
+
+    // get total record and total page
+    const totalRecords = await User.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecords / perPage);
+
+    //get user based on page
+    const users = await User.find(filter)
+      .select("-password -__v")
+      .skip(skip)
+      .limit(perPage)
+      .lean();
     res.status(200).json({
       success: true,
       count: users.length,
+      totalRecords,
+      totalPages,
       data: users,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const getCurrentlyLoggedInUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Unexpected error, no ID retrieved from current user",
+      });
+    }
+    const currentUser = await User.findById(userId);
+    return res.status(200).json({
+      success: true,
+      data: currentUser,
     });
   } catch (error) {
     serverErrorMessageRes(res, error);
@@ -234,11 +287,12 @@ const updateVip = async (req, res) => {
 };
 
 module.exports = {
-  getAllUsers,
+  getUsers,
   deleteUser,
   addUserByAdmin,
   updateUserProfile,
   updatePassword,
   updateRole,
   updateVip,
+  getCurrentlyLoggedInUser,
 };

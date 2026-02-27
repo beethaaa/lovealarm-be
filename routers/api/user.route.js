@@ -7,6 +7,8 @@ const {
   updateRole,
   updatePassword,
   updateUserProfile,
+  getUsers,
+  getCurrentlyLoggedInUser,
 } = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -16,39 +18,74 @@ router
   .route("/")
   .get(
     // #swagger.tags = ['Users']
-    // #swagger.summary = 'Get all users'
+    // #swagger.summary = 'Get all users with pagination and filters'
     // #swagger.security = [{ "bearerAuth": [] }]
+    /* #swagger.parameters['page'] = {
+      in: 'query',
+      description: 'Page number (default: 1)',
+      type: 'integer',
+      example: 1
+    } */
+    /* #swagger.parameters['recordPerPage'] = {
+      in: 'query',
+      description: 'Records per page (default: 10)',
+      type: 'integer',
+      example: 10
+    } */
+    /* #swagger.parameters['keyword'] = {
+      in: 'query',
+      description: 'Search by user name',
+      type: 'string',
+      example: 'John'
+    } */
+    /* #swagger.parameters['active'] = {
+      in: 'query',
+      description: 'Filter by active status',
+      type: 'boolean',
+      example: true
+    } */
+    /* #swagger.parameters['roleKey'] = {
+      in: 'query',
+      description: 'Filter by role keys (array)',
+      type: 'array',
+      example: ['1', '2']
+    } */
     /* #swagger.responses[200] = {
-       description: "List of users",
-       schema: [{
+      description: "List of users with pagination",
+      schema: {
+        success: true,
+        count: 10,
+        totalRecords: 21,
+        totalPages: 3,
+        currentPage: 1,
+        data: [{
+          _id: "507f1f77bcf86cd799439011",
           email: "user@example.com",
           roleKey: 1,
           avatarUrl: "https://example.com/avatar.jpg",
-
+          active: true,
           profile: {
-              name: "John Doe",
-              gender: "male",
-              birthday: "1990-01-15",
-              interests: ["music", "travel"],
-              personalityTags: ["outgoing", "creative"]
-            },
-
+            name: "John Doe",
+            gender: "male",
+            birthday: "1990-01-15",
+            interests: ["music", "travel"],
+            personalityTags: ["outgoing", "creative"]
+          },
           setting: {
-              bleScanEnabled: true,
-              vibrationEnabled: false,
-              companionModeEnabled: true
-            },
-
+            bleScanEnabled: true,
+            vibrationEnabled: false,
+            companionModeEnabled: true
+          },
           mode: "SINGLE",
-
           vip: {
-              isActive: false,
-              expiredAt: "2025-12-31T23:59:59Z"
+            isActive: false,
+            expiredAt: "2025-12-31T23:59:59Z"
           }
-        },'...']
+        }]
+      }
     } */
     verifyRoles(ROLE.ADMIN),
-    getAllUsers,
+    getUsers,
   )
   .post(
     // #swagger.tags = ['Users']
@@ -141,6 +178,13 @@ router
     } */
     updateUserProfile,
   );
+
+router.route("/me").get(
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Get currently logged in user profile'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  getCurrentlyLoggedInUser,   
+)
 
 router.route("/password").put(
   //#swagger.tags = ['Users']
