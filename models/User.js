@@ -24,9 +24,17 @@ const UserSchema = new Schema(
       default:
         "https://i.pinimg.com/474x/52/17/11/5217111bf01e03621b31bfd2abbdbb6a.jpg?nii=t",
     },
+    lastLogin: {
+      type: Date,
+      default: Date.now,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
 
     profile: {
-      name: {type:String, default: ''},
+      name: { type: String, default: "" },
       gender: { type: Number, default: GENDER.MALE },
       birthday: { type: Date },
       interest: { type: [String], default: [] },
