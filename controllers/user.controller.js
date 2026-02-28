@@ -37,13 +37,82 @@ const buildUpdateObject = (updateDetail, notAllowedField) => {
   return updateData;
 };
 
-const getAllUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password -__v").lean();
+    const {
+      page = 1,
+      recordPerPage = 10,
+      active,
+      keyword,
+      roleKey,
+    } = req.query;
+    const pageNumber = Math.max(parseInt(page, 10) || 1, 1); //rewind to page 1 if invalid number provided
+    const perPage = Math.max(parseInt(recordPerPage, 10) || 10, 1); //rewind to 10 records per page if invalid number provided
+    const skip = (pageNumber - 1) * perPage;
+    const filter = {};
+
+    if (keyword) {
+      filter["profile.name"] = { $regex: keyword, $options: "i" };
+    }
+    const activeStr = String(active).toLowerCase();
+    if (activeStr === "true") {
+      filter["active"] = true;
+    } else if (activeStr === "false") {
+      filter["active"] = false;
+    }
+    const roleKeysArray = Array.isArray(roleKey) ? roleKey : [roleKey];
+    const parsedRoleKeys = roleKeysArray
+      .map((rk) => {
+        const trimmed = typeof rk === "string" ? rk.trim() : "";
+        const parsed = parseInt(trimmed, 10);
+        return Number.isNaN(parsed) ? null : parsed;
+      })
+      .filter((rk) => rk !== null);
+
+    if (parsedRoleKeys.length > 0) {
+      filter["roleKey"] = { $in: parsedRoleKeys };
+    }
+
+    filter["_id"] = { $ne: req.userId };
+
+    // get total record and total page
+    const totalRecords = await User.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecords / perPage);
+
+    //get user based on page
+    const users = await User.find(filter)
+      .select("-password -__v")
+      .skip(skip)
+      .limit(perPage)
+      .lean();
     res.status(200).json({
       success: true,
-      count: users.length,
+      pageItemCount: users.length,
+      totalRecords,
+      totalPages,
+      currentPage: pageNumber,
       data: users,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const getCurrentlyLoggedInUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Unexpected error, no ID retrieved from current user",
+      });
+    }
+    const currentUser = await User.findById(userId)
+      .select("-password -__v")
+      .lean();
+    return res.status(200).json({
+      success: true,
+      data: currentUser,
     });
   } catch (error) {
     serverErrorMessageRes(res, error);
@@ -122,6 +191,22 @@ const updateUserProfile = async (req, res) => {
   try {
     const userId = req.userId;
     const updateDetail = req.body;
+
+    let duplicate = null;
+    if (updateDetail.email) {
+      duplicate = await User.findOne({
+        email: updateDetail.email,
+        _id: { $ne: userId },
+      }).lean();
+    }
+
+    if (duplicate) {
+      return res.status(409).json({
+        success: false,
+        message: "Email is already in use!",
+      });
+    }
+
     const updateData = buildUpdateObject(updateDetail, notAllowedField);
     if (updateData.error)
       return res
@@ -234,11 +319,12 @@ const updateVip = async (req, res) => {
 };
 
 module.exports = {
-  getAllUsers,
+  getUsers,
   deleteUser,
   addUserByAdmin,
   updateUserProfile,
   updatePassword,
   updateRole,
   updateVip,
+  getCurrentlyLoggedInUser,
 };
