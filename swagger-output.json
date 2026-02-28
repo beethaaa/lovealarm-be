@@ -461,7 +461,7 @@
                                 "type": "string",
                                 "example": "1990-01-15"
                               },
-                              "interests": {
+                              "interest": {
                                 "type": "array",
                                 "example": [
                                   "music",
@@ -590,7 +590,7 @@
                                 "type": "string",
                                 "example": "1990-01-15"
                               },
-                              "interests": {
+                              "interest": {
                                 "type": "array",
                                 "example": [
                                   "music",

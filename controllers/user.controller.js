@@ -54,12 +54,25 @@ const getUsers = async (req, res) => {
     if (keyword) {
       filter["profile.name"] = { $regex: keyword, $options: "i" };
     }
-    if (active !== undefined && active !== null) {
-      filter["active"] = JSON.parse(active);
+    const activeStr = String(active).toLowerCase();
+    if (activeStr === "true") {
+      filter["active"] = true;
+    } else if (activeStr === "false") {
+      filter["active"] = false;
     }
-    if (roleKey && roleKey.length > 0 && roleKey[0] !== null) {
-      filter["roleKey"] = { $in: roleKey };
+    const roleKeysArray = Array.isArray(roleKey) ? roleKey : [roleKey];
+    const parsedRoleKeys = roleKeysArray
+      .map((rk) => {
+        const trimmed = typeof rk === "string" ? rk.trim() : "";
+        const parsed = parseInt(trimmed, 10);
+        return Number.isNaN(parsed) ? null : parsed;
+      })
+      .filter((rk) => rk !== null);
+
+    if (parsedRoleKeys.length > 0) {
+      filter["roleKey"] = { $in: parsedRoleKeys };
     }
+
     filter["_id"] = { $ne: req.userId };
 
     // get total record and total page
@@ -74,9 +87,10 @@ const getUsers = async (req, res) => {
       .lean();
     res.status(200).json({
       success: true,
-      count: users.length,
+      pageItemCount: users.length,
       totalRecords,
       totalPages,
+      currentPage: pageNumber,
       data: users,
     });
   } catch (error) {
@@ -93,7 +107,9 @@ const getCurrentlyLoggedInUser = async (req, res) => {
         message: "Unexpected error, no ID retrieved from current user",
       });
     }
-    const currentUser = await User.findById(userId).select("-password -__v").lean();
+    const currentUser = await User.findById(userId)
+      .select("-password -__v")
+      .lean();
     return res.status(200).json({
       success: true,
       data: currentUser,
@@ -176,11 +192,15 @@ const updateUserProfile = async (req, res) => {
     const userId = req.userId;
     const updateDetail = req.body;
 
-    const existedEmailList = await User.find({"_id" : { $ne: userId}}).select("email").lean();
+    let duplicate = null;
+    if (updateDetail.email) {
+      duplicate = await User.findOne({
+        email: updateDetail.email,
+        _id: { $ne: userId },
+      }).lean();
+    }
 
-    const isDuplicateEmail = existedEmailList.some(user => user.email === updateDetail.email);
-
-    if (isDuplicateEmail) {
+    if (duplicate) {
       return res.status(409).json({
         success: false,
         message: "Email is already in use!",

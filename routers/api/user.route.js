@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  getAllUsers,
   deleteUser,
   addUserByAdmin,
   updateVip,
@@ -68,7 +67,7 @@ router
             name: "John Doe",
             gender: "male",
             birthday: "1990-01-15",
-            interests: ["music", "travel"],
+            interest: ["music", "travel"], 
             personalityTags: ["outgoing", "creative"]
           },
           setting: {
@@ -183,7 +182,7 @@ router.route("/me").get(
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Get currently logged in user profile'
   // #swagger.security = [{ "bearerAuth": [] }]
-  getCurrentlyLoggedInUser,   
+  getCurrentlyLoggedInUser,
 )
 
 router.route("/password").put(
