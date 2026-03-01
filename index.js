@@ -48,13 +48,14 @@ app.use(
   "/api/couple-milestones",
   require("./routers/api/coupleMilestone.route.js"),
 );
-app.use("/api/challenges", require("./routers/api/challenge.router.js"));
+app.use("/api/challenges", require("./routers/api/challenge.route.js"));
 app.use(
   "/api/suggest-friends",
   require("./routers/api/suggestFriend.route.js"),
 );
 app.use("/api/love-request", require("./routers/api/loveRequest.route.js"));
 app.use("/api/statistics", require("./routers/api/statistic.route.js"));
+app.use("/api/ai", require("./ai/routers/gemini.route.js"));
 
 app.use((req, res, next) => {
   res
