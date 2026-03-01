@@ -192,7 +192,7 @@ router.route("/password").put(
   updatePassword,
 );
 
-router.route("/role").put(
+router.route("/role/:id").put(
   //#swagger.tags = ['Users']
   //#swagger.summary = 'Update user role (admin only)'
   // #swagger.security = [{ "bearerAuth": [] }]
