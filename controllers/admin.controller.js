@@ -15,7 +15,14 @@ const updateUserByAdmin = async (req, res) => {
         .status(400)
         .json({ success: false, message: "User id is required!" });
 
-    if (userId === req.userId && updateDetail.roleKey) // allow admin to update their own profile but not roleKey  
+    const isSelfUpdate = userId === req.userId;
+    const isRoleChangeAttempt = Object.prototype.hasOwnProperty.call(
+      updateDetail,
+      "roleKey",
+    );
+
+    if (isSelfUpdate && isRoleChangeAttempt)
+      // allow admin to update their own profile but not roleKey
       return res.status(400).json({
         success: false,
         message: "You cannot update your own profile!",
@@ -54,7 +61,10 @@ const updateUserByAdmin = async (req, res) => {
       { $set: updateData },
       { runValidators: true, new: true },
     );
-    console.log(`Updated Succesfully: ${updatedUser}`);
+    console.log(
+      `Updated Successfully for userId=${userId}:`,
+      JSON.stringify(updatedUser),
+    );
     res.status(200).json({
       success: true,
       message: "User profile updated successfully!",

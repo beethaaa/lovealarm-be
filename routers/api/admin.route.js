@@ -35,7 +35,7 @@ router.route("/user/:id").put(
                 mode: {
                     type: 'number',
                     example: 1,
-                    enum: [0, 1]
+                    enum: [1, 2]
                 },
                 setting: {
                     type: 'object',
@@ -64,5 +64,3 @@ router.route("/user/:id").put(
 );
 
 module.exports = router;
-
-
