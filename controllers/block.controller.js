@@ -64,13 +64,35 @@ const deleteBlockLinks = async (req, res) => {
   try{
     const userId = req.userId;
     const {blockedId} = req.body;
-
+  
     if(!blockedId){
       return res
         .status(400)
         .json({ success: false, message: "blockedId is required" });
     }
+
+    const blockStatus = await checkBlocked(userId, blockedId); // Call once
+    
+    if(blockStatus === 0){
+      return res.status(404).json({ success: false, message: "No block link found" });
+    }
+    
+    if(blockStatus === 2){
+      return res.status(403).json({ success: false, message: "You cannot unblock this user" });
+    }
+    
+    if(blockStatus === 1 || blockStatus === 3){
+      const deleted = await Block.deleteOne({blocker: userId, blocked: blockedId});
+
+      if(deleted.deletedCount === 0){
+        return res.status(404).json({ success: false, message: "Block link not found" });
+      }
+      return res.status(200).json({ success: true, message: "Block link deleted successfully" });
+    }
+
   }catch(error){
     serverErrorMessageRes(res, error);
   }
 }
+
+module.exports = {createBlockLink, deleteBlockLinks, checkBlocked}
