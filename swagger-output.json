@@ -255,6 +255,102 @@
         }
       }
     },
+    "/api/admin/user/{id}": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update user data by admin",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roleKey": {
+                    "type": "number",
+                    "example": 2
+                  },
+                  "vip": {
+                    "type": "object",
+                    "properties": {
+                      "isActive": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "expiredAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-31T23:59:59.000Z"
+                      }
+                    }
+                  },
+                  "mode": {
+                    "type": "number",
+                    "example": 1,
+                    "enum": [
+                      1,
+                      2
+                    ]
+                  },
+                  "setting": {
+                    "type": "object",
+                    "properties": {
+                      "bleScanEnabled": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "vibrationEnabled": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "companionModeEnabled": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ble-session/": {
       "post": {
         "tags": [

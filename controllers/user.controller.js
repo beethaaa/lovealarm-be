@@ -162,6 +162,7 @@ const updateUserProfile = async (req, res) => {
     const userId = req.userId;
     const updateDetail = req.body;
 
+    //Validate duplicate Email if email field is provided in update request
     let duplicate = null;
     if (updateDetail.email) {
       duplicate = await User.findOne({
@@ -176,7 +177,7 @@ const updateUserProfile = async (req, res) => {
         message: "Email is already in use!",
       });
     }
-
+    
     const updateData = buildUpdateObject(updateDetail, allowedField);
     if (updateData.error)
       return res
@@ -188,7 +189,7 @@ const updateUserProfile = async (req, res) => {
       { $set: updateData },
       { runValidators: true, new: true },
     );
-    console.log(`Updated User: ${updatedUser}`);
+    console.log(`Updated Succesfully: ${updatedUser}`);
     res.status(200).json({
       success: true,
       message: "User profile updated successfully!",
