@@ -156,7 +156,7 @@ const deleteUser = async (req, res) => {
 
 /*dedicated function for updating User profile*/
 const updateUserProfile = async (req, res) => {
-  const notAllowedField = ["role", "mode", "vip", "password"];
+  const allowedField = ["email", "avatarUrl", "profile"];
 
   try {
     const userId = req.userId;
@@ -177,7 +177,7 @@ const updateUserProfile = async (req, res) => {
       });
     }
 
-    const updateData = buildUpdateObject(updateDetail, notAllowedField);
+    const updateData = buildUpdateObject(updateDetail, allowedField);
     if (updateData.error)
       return res
         .status(403)
