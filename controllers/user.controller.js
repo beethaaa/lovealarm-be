@@ -1,41 +1,11 @@
 const { getRoleNameByKey } = require("../constraints/role");
+const { buildUpdateObject } = require("../helpers/buildUpdateObject");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
-/**************************
- * Return an object in format:
- *  updateData: {
- *    profile.name:"John Doe",
- *    profile.age: 20,
- *    profile.interest: ["Swimming", "Basketball"]
- * }
- *
- * this will ensure the code to not delete unmentioned field when using findByIdAndUpdate()
- *
- ****************************/
-const buildUpdateObject = (updateDetail, notAllowedField) => {
-  const updateData = {};
 
-  for (const key in updateDetail) {
-    if (notAllowedField.includes(key))
-      return { error: `Field ${key} is not allowed to update!` };
-    const value = updateDetail[key];
-    if (Array.isArray(value)) {
-      updateData[key] = value;
-    } else if (typeof value === "object" && value !== null) {
-      for (const nestedKey in value) {
-        // if (notAllowedField[key].includes(nestedKey))
-        updateData[`${key}.${nestedKey}`] = value[nestedKey];
-      }
-    } else {
-      updateData[key] = value;
-    }
-  }
-
-  return updateData;
-};
 
 const getUsers = async (req, res) => {
   try {
@@ -276,7 +246,7 @@ const updatePassword = async (req, res) => {
 
 const updateRole = async (req, res) => {
   try {
-    const userId = req?.userId;
+    const userId = req?.params?.id;
     const { role } = req.body;
 
     const user = await User.findByIdAndUpdate(
@@ -285,7 +255,7 @@ const updateRole = async (req, res) => {
         $set: { roleKey: role.key },
       },
       { new: true },
-    );
+    ).select("-password -__v").lean();
     console.log(`Update role: ${user}`);
     res.status(200).json({
       success: true,
@@ -305,7 +275,7 @@ const updateVip = async (req, res) => {
       userId,
       { $set: { vip } },
       { new: true },
-    );
+    ).select("-password -__v").lean();
     console.log(`Update vip: ${user}`);
     res.status(200).json({
       success: true,

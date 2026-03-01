@@ -872,13 +872,23 @@
         }
       }
     },
-    "/api/users/role": {
+    "/api/users/role/{id}": {
       "put": {
         "tags": [
           "Users"
         ],
         "summary": "Update user role (admin only)",
         "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Role updated successfully",
