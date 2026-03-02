@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const Block = require("../models/Block");
 const User = require("../models/User");

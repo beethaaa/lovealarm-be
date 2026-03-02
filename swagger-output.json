@@ -454,7 +454,10 @@
                     "type": "string",
                     "example": "699da39ee5596118b557aad2"
                   }
-                }
+                },
+                "required": [
+                  "blockedId"
+                ]
               }
             }
           }

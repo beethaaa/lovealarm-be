@@ -24,22 +24,23 @@ router
     // #swagger.security = [{ "bearerAuth": [] }]
     /* #swagger.requestBody = {
       description: 'User ID to block',
-        required: true,
-        content: {
-            'application/json': {
-                schema: {
-                type: 'object',
-                properties: {
-                  blockedId: {
-                    type: 'string',
-                    example: '699da39ee5596118b557aad2'
-                    }
-                  },
-                  
-                }
-            }
-        }
-  } */
+         required: true,  
+      description: 'User ID to block',  
+      content: {  
+        'application/json': {  
+          schema: {  
+            type: 'object',  
+            properties: {  
+              blockedId: {  
+                type: 'string',  
+                example: '699da39ee5596118b557aad2',  
+              },  
+            },  
+            required: ['blockedId'],  
+          },  
+        },  
+      },  
+    } */  
     verifyRoles(ROLE.USER),
     createBlockLink,
   );
