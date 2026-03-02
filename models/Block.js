@@ -5,11 +5,13 @@ const BlockSchema = new Schema(
   {
     blocker: {
       type: Schema.Types.ObjectId,
+      ref:"User",
       require,
     },
 
     blocked: {
       type: Schema.Types.ObjectId,
+      ref:"User",
       require,
     },
   },
