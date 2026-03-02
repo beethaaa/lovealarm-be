@@ -393,6 +393,118 @@
         }
       }
     },
+    "/api/blocks/": {
+      "get": {
+        "tags": [
+          "Block"
+        ],
+        "summary": "Get block list of the user",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Block"
+        ],
+        "summary": "Block a user",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "User ID to block",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "blockedId": {
+                    "type": "string",
+                    "example": "699da39ee5596118b557aad2"
+                  }
+                },
+                "required": [
+                  "blockedId"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/blocks/{id}": {
+      "delete": {
+        "tags": [
+          "Block"
+        ],
+        "summary": "Unblock a user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/suggest-friends/": {
       "post": {
         "tags": [
