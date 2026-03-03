@@ -16,16 +16,16 @@ const getConversationStart = async (req, res) => {
     const { interests } = req.body;
 
     const prompt = `
-Tạo 4 câu bắt chuyện ngắn gọn, tự nhiên, thú vị.
-Sở thích người kia: ${interests}
+      Tạo 4 câu bắt chuyện ngắn gọn, tự nhiên, thú vị.
+      Sở thích người kia: ${interests}
 
-- Mỗi câu tối đa 20 từ
-- Không emoji
-- Không dùng dấu ngoặc kép
-`;
+      - Mỗi câu tối đa 20 từ
+      - Không emoji
+      - Không dùng dấu ngoặc kép
+      `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: prompt,
 
       config: {
