@@ -15,6 +15,10 @@ const MessageSchema = Schema(
     },
     content: String,
     type: Number,
+    isDeleted: {
+      type:Boolean,
+      default: false,
+    }
   },
   { timestamps: true },
 );
