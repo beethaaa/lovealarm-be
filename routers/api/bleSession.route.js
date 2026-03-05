@@ -3,16 +3,26 @@ const express = require("express");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
 const { checkRequiredFields } = require("../../middlewares");
-const { createBleSession } = require("../../controllers/bleSession.controller");
+const {
+  createBleSession,
+  getAllCurrentBleSession,
+} = require("../../controllers/bleSession.controller");
 const router = express.Router();
 
-router.route("/").post(
-  // #swagger.tags = ['BleSession']
-  // #swagger.summary = 'Create a new ble session (User only)'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  verifyRoles(ROLE.USER),
-  checkRequiredFields("bleUuid", "platform"),
-  createBleSession,
-);
+router
+  .route("/")
+  .post(
+    // #swagger.tags = ['BleSession']
+    // #swagger.summary = 'Create a new ble session (User only)'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    verifyRoles(ROLE.USER),
+    checkRequiredFields("bleUuid", "platform"),
+    createBleSession,
+  )
+  .get(
+    // #swagger.tags = ['BleSession']
+    // #swagger.summary = 'get all current ble session'
+    getAllCurrentBleSession,
+  );
 
 module.exports = router;

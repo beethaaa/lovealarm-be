@@ -352,6 +352,21 @@
       }
     },
     "/api/ble-session/": {
+      "get": {
+        "tags": [
+          "BleSession"
+        ],
+        "summary": "get all current ble session",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
       "post": {
         "tags": [
           "BleSession"
