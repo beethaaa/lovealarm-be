@@ -22,6 +22,7 @@ router
   .get(
     // #swagger.tags = ['BleSession']
     // #swagger.summary = 'get all current ble session'
+    // #swagger.security = [{ "bearerAuth": [] }]
     getAllCurrentBleSession,
   );
 
