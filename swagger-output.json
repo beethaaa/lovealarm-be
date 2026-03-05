@@ -1175,6 +1175,34 @@
         ]
       }
     },
+    "/api/couples/": {
+      "get": {
+        "tags": [
+          "Couple"
+        ],
+        "summary": "Get info of partner if you are in Couple mode",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/couples/accept": {
       "post": {
         "tags": [

@@ -148,4 +148,23 @@ const leaveCoupleMode = async (req, res) => {
   }
 };
 
-module.exports = { acceptCoupleMode, leaveCoupleMode };
+const getPartnerInfo = async (req, res) => {
+  const { userId } = req;
+
+  try {
+    const couple = await Couple.findOne({ users: userId });
+    if (!couple)
+      return res.status(403).json({ message: "You are not in couple mode!" });
+
+    const partnerId = couple.users.find((item) => item !== userId);
+    const partner = await User.findById(partnerId);
+    if (!partner)
+      return res.status(404).json({ message: "Cannot find your partner!" });
+
+    res.status(200).json(partner);
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+module.exports = { acceptCoupleMode, leaveCoupleMode, getPartnerInfo };
