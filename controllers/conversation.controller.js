@@ -36,6 +36,13 @@ const getConversation = async (req, res) => {
 
 const createConversation = async (req, res) => {
   try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
     const { participants } = req.body;
     // Check if participants exists and is an array
     if (!participants || !Array.isArray(participants)) {

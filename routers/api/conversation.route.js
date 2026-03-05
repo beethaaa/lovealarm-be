@@ -12,7 +12,33 @@ router.route("/")
     verifyRoles(ROLE.USER),
     getConversation
 )
+.post(
+    // #swagger.tags = ['Conversation']
+    // #swagger.summary = 'Create a new conversation'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    /* #swagger.requestBody = {
+        required: true,
+        content: {
+            'application/json': {
+                schema: {
+                    type: 'object',
+                    properties: {
+                        participantIds: {
+                            type: 'array',
+                            items: {
+                                type: 'string'
+                            },
+                            example: ['699da49ae5596118b557aad6', '699da49ae5596118b557aad7']
+                        },
 
+                    }
+                }
+            }
+        }
+    } */
+    verifyRoles(ROLE.USER),
+    createConversation
+)
 
 router.route("/seen").put(
     // #swagger.tags = ['Conversation']
@@ -41,7 +67,7 @@ router.route("/seen").put(
     verifyRoles(ROLE.USER),
     updateLastSeen
 )
-route.route("/end").put(
+router.route("/end").put(
     // #swagger.tags = ['Conversation']
     // #swagger.summary = 'End a conversation'
     // #swagger.security = [{ "bearerAuth": [] }]
