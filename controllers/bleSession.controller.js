@@ -15,7 +15,17 @@ const createBleSession = async (req, res) => {
     serverErrorMessageRes(res, error);
   }
 };
+const getAllCurrentBleSession = async (req, res) => {
+  try {
+    await BleSession.find();
+
+    res.sendStatus(201);
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
 
 module.exports = {
   createBleSession,
+  getAllCurrentBleSession,
 };

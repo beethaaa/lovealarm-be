@@ -39,6 +39,7 @@ app.use("/otp", require("./routers/otp.route.js"));
 app.use(verifyJwt);
 app.use("/api/admin", require("./routers/api/admin.route.js"));
 app.use("/api/ble-session", require("./routers/api/bleSession.route.js"));
+app.use("/api/blocks", require("./routers/api/blockUser.route.js"));
 app.use(
   "/api/suggest-friends",
   require("./routers/api/suggestFriend.route.js"),
