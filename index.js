@@ -40,6 +40,7 @@ app.use(verifyJwt);
 app.use("/api/admin", require("./routers/api/admin.route.js"));
 app.use("/api/ble-session", require("./routers/api/bleSession.route.js"));
 app.use("/api/blocks", require("./routers/api/blockUser.route.js"));
+app.use("/api/conversation", require("./routers/api/conversation.route.js"));
 app.use(
   "/api/suggest-friends",
   require("./routers/api/suggestFriend.route.js"),
@@ -56,6 +57,7 @@ app.use(
   require("./routers/api/suggestFriend.route.js"),
 );
 app.use("/api/love-request", require("./routers/api/loveRequest.route.js"));
+app.use("/api/messages", require("./routers/api/message.route.js"));
 app.use("/api/statistics", require("./routers/api/statistic.route.js"));
 app.use("/api/ai", require("./ai/routers/gemini.route.js"));
 
