@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const allowedOrigins = require("../config/allowedOrigins");
+const registerMessageHandlers = require("./message.socket");
 
 let ioInstance;
 
@@ -24,8 +25,9 @@ const initSocket = (server) => {
 
   io.on("connection", (socket) => {
     console.log("A user connected: " + socket.userId);
-
     socket.join(socket.userId);
+
+    registerMessageHandlers(io, socket);
 
     socket.on("disconnect", () => {
       console.log("user disconnected");
