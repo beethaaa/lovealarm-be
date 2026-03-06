@@ -25,6 +25,13 @@ router.route("/change-pass").post(
   changePassword,
 );
 
+router.route("/reset-password").post(
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'Reset password after verifying OTP'
+  checkRequiredFields("email", "newPassword"),
+  resetPassword,
+);
+
 router.use(checkRequiredFields("email", "password"));
 router.route("/login").post(
   // #swagger.tags = ['Auth']
@@ -35,12 +42,6 @@ router.route("/register").post(
   // #swagger.tags = ['Auth']
   // #swagger.summary = 'Register a new user'
   handleSignup,
-);
-
-router.route("/reset-password").post(
-  // #swagger.tags = ['Auth']
-  // #swagger.summary = 'Reset password after verifying OTP'
-  resetPassword,
 );
 
 module.exports = router;
