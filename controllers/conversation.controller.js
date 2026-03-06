@@ -109,10 +109,7 @@ const updateConversationType = async (conversationId, type) => {
     throw new Error("Conversation ID is required");
   }
   if (!type) {
-    res.status(400).json({
-      success: false,
-      message: "Conversation type is required",
-    });
+       throw new Error("Conversation type is required");  
   }
 
   if (!allowedStatus(type)) {
@@ -160,7 +157,7 @@ const updateLastSeen = async (req, res) => {
       });
     }
 
-    conversation.lastSeen.set({ userId: messageId });
+    conversation.lastSeen.set( userId, messageId );
     await conversation.save();
 
     return res
@@ -175,7 +172,13 @@ const endConversation = async (req, res) => {
   try {
     const userId = req.userId;
     const { conversationId } = req.body;
-
+    
+    if (!userId) {  
+      return res.status(400).json({  
+        success: false,  
+        message: "User ID is required",  
+      });  
+    }  
     // Check if conversationId exists
     if (!conversationId) {
       return res.status(400).json({

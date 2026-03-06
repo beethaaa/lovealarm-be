@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const CONVERSATION_STATUS = require("../constraints/conversationStatus");
+const {CONVERSATION_STATUS} = require("../constraints/conversationStatus");
 const { Schema } = mongoose;
 const ConversationSchema = Schema(
   {

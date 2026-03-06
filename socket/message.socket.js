@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const { ensureDbReady, mapDbError } = require("../helpers/dbError");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
@@ -8,7 +6,7 @@ const registerMessageHandlers = (io, socket) => {
   socket.on("conversation:join", async (conversationId, callback) => {
     try {
       if (!conversationId) {
-        return callback({
+        return callback?.({
           success: false,
           message: "conversationId is required",
         });
@@ -18,7 +16,7 @@ const registerMessageHandlers = (io, socket) => {
         participants: socket.userId,
         endedAt: { $eq: null },
       });
-      console.log("Conversation: ", conversation);
+      
       
       if (!conversation) {
         return callback({ success: false, message: "Conversation not found" });
@@ -52,7 +50,7 @@ const registerMessageHandlers = (io, socket) => {
         });
 
         socket.to(conversationId).emit("message:new", newMessage);
-        return callback({ success: true, message: "Message sent" });
+        return callback?.({ success: true, message: "Message sent" });
       } catch (error) {
         const e = mapDbError(error);
         return callback?.({ success: false, ...e });
@@ -62,7 +60,7 @@ const registerMessageHandlers = (io, socket) => {
 
   socket.on("conversation:leave", (conversationId, callback) => {
     socket.leave(conversationId);
-    return callback({ success: true, message: "Left conversation" });
+    return callback?.({ success: true, message: "Left conversation" });
   });
 
   socket.on("message:seen", async ({ messageId, conversationId }, callback) => {
@@ -83,7 +81,7 @@ const registerMessageHandlers = (io, socket) => {
         },
         { new: true },
       );
-      return callback({ success: true, message: "Seen", updated: updated 1});
+      return callback?.({ success: true, message: "Seen", updated: updated});
     } catch (error) {
       const e = mapDbError(error);
       return callback?.({ success: false, ...e });

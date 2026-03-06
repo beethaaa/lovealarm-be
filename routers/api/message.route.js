@@ -17,10 +17,6 @@ router
                 schema: {
                     type: 'object',
                     properties: {
-                        conversationId: {
-                            type: 'string',
-                            example: '699da49ae5596118b557aad6'
-                        },
                         content: {
                             type: 'string',
                             example: 'Hello, how are you?'

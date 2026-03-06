@@ -23,7 +23,7 @@ router.route("/")
                 schema: {
                     type: 'object',
                     properties: {
-                        participantIds: {
+                        participants: {
                             type: 'array',
                             items: {
                                 type: 'string'

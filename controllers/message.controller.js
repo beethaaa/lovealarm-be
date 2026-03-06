@@ -82,7 +82,8 @@ const createMessage = async (req, res) => {
 
 const editMessage = async (req, res) => {
   try {
-    const { messageId, content } = req.body;
+    const messageId = req.params.messageId;
+    const { content } = req.body;
     const userId = req.userId;
     if (!userId) {
       return res.status(400).json({
@@ -125,7 +126,7 @@ const editMessage = async (req, res) => {
       });
     }
 
-    message.content.set(content);
+    message.content = content;
     await message.save();
 
     return res.status(200).json({
@@ -140,7 +141,7 @@ const editMessage = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
   try {
-    const { messageId } = req.body;
+    const messageId = req.params.messageId;
     const userId = req.userId;
     if (!userId) {
       return res.status(400).json({
