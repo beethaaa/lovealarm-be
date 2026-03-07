@@ -5,8 +5,6 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
-
-
 const getUsers = async (req, res) => {
   try {
     const {
@@ -156,7 +154,7 @@ const deleteUser = async (req, res) => {
 
 /*dedicated function for updating User profile*/
 const updateUserProfile = async (req, res) => {
-  const allowedField = ["email", "avatarUrl", "profile"];
+  const allowedField = ["email", "avatarUrl", "profile", "location"];
 
   try {
     const userId = req.userId;
@@ -177,7 +175,7 @@ const updateUserProfile = async (req, res) => {
         message: "Email is already in use!",
       });
     }
-    
+
     const updateData = buildUpdateObject(updateDetail, allowedField);
     if (updateData.error)
       return res
@@ -256,7 +254,9 @@ const updateRole = async (req, res) => {
         $set: { roleKey: role.key },
       },
       { new: true },
-    ).select("-password -__v").lean();
+    )
+      .select("-password -__v")
+      .lean();
     console.log(`Update role: ${user}`);
     res.status(200).json({
       success: true,
@@ -276,7 +276,9 @@ const updateVip = async (req, res) => {
       userId,
       { $set: { vip } },
       { new: true },
-    ).select("-password -__v").lean();
+    )
+      .select("-password -__v")
+      .lean();
     console.log(`Update vip: ${user}`);
     res.status(200).json({
       success: true,
