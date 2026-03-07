@@ -60,6 +60,7 @@ app.use("/api/love-request", require("./routers/api/loveRequest.route.js"));
 app.use("/api/messages", require("./routers/api/message.route.js"));
 app.use("/api/statistics", require("./routers/api/statistic.route.js"));
 app.use("/api/ai", require("./ai/routers/gemini.route.js"));
+app.use("/api/interests", require("./routers/api/interest.route.js"));
 
 app.use((req, res, next) => {
   res
