@@ -32,15 +32,14 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    location:{
-      type: String,
-    },
+
     profile: {
       name: { type: String, default: "" },
       gender: { type: Number, default: GENDER.MALE },
       birthday: { type: Date },
       interest: { type: [String], default: [] },
       personalityTags: { type: [String], default: [] },
+      location: { type: String },
     },
 
     setting: {

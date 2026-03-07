@@ -154,7 +154,7 @@ const deleteUser = async (req, res) => {
 
 /*dedicated function for updating User profile*/
 const updateUserProfile = async (req, res) => {
-  const allowedField = ["email", "avatarUrl", "profile", "location"];
+  const allowedField = ["email", "avatarUrl", "profile"];
 
   try {
     const userId = req.userId;
