@@ -9,6 +9,7 @@ const CoupleSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    nextFixAnni: Date,
   },
   { timestamps: true },
 );

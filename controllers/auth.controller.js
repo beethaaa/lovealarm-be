@@ -76,8 +76,16 @@ const handleLogin = async (req, res) => {
       { $set: { lastLogin: new Date() } },
     );
 
+    if (matchUser.isFirstLogin) {
+      await User.updateOne(
+        { _id: matchUser._id },
+        { $set: { isFirstLogin: false } },
+      );
+    }
+
     res.status(200).json({
       accessToken,
+      isFirstLogin: matchUser.isFirstLogin,
     });
   } catch (error) {
     serverErrorMessageRes(res, error);

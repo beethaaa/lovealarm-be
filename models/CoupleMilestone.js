@@ -6,6 +6,7 @@ const CoupleMilestoneSchema = new Schema(
     coupleId: mongoose.Types.ObjectId,
     code: String,
     date: Date,
+    nextCelebrate: Date,
     createdBy: mongoose.Types.ObjectId,
   },
   { timestamps: true },

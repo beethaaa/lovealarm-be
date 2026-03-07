@@ -65,6 +65,11 @@ const UserSchema = new Schema(
       },
       expiredAt: Date,
     },
+
+    isFirstLogin: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );
