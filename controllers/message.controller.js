@@ -1,5 +1,58 @@
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 
+const fetchMessage = async (req, res) => {
+  try {
+    const { conversationId, beforeId, limit = 20 } = req.params;
+    const userId = req.userId;
+
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "conversationId is required",
+      });
+    }
+    if (limit && isNaN(Number(limit))) {
+      return res.status(400).json({
+        success: false,
+        message: "limit must be a number",
+      });
+    }
+    if (beforeId && typeof beforeId !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "beforeId must be a string",
+      });
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+    if (!conversation.participants.includes(userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not verified to access this conversation",
+      });
+    }
+
+    const query = { conversationId };
+
+    if (beforeId) {
+      query = { ...query, _id: { $lt: beforeId } };
+    }
+
+    const messages = await Message.find({ query })
+      .sort({ _id: -1 })
+      .limit(Number(limit));
+    return res.status(200).json({ messages });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
 const createMessage = async (req, res) => {
   try {
     const userId = req.userId;
@@ -187,4 +240,5 @@ module.exports = {
   createMessage,
   editMessage,
   deleteMessage,
+  fetchMessage,
 };
