@@ -13,7 +13,7 @@ const fetchMessage = async (req, res) => {
         message: "conversationId is required",
       });
     }
-    if (mongoose.Types.ObjectId.isValid(conversationId) && !conversationId) {
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
       return res.status(400).json({
         success: false,
         message: "invalid conversationId format",

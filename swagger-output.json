@@ -2113,9 +2113,8 @@
           {
             "name": "limit",
             "in": "query",
-            "description": "Maximum number of messages to return",
+            "description": "Maximum number of messages to return (default=20)",
             "required": false,
-            "default": 20,
             "example": 20,
             "schema": {
               "type": "integer"

@@ -26,10 +26,9 @@ router.route("/").get(
     } */
   /* #swagger.parameters['limit'] = {
         in: 'query',
-        description: 'Maximum number of messages to return',
+        description: 'Maximum number of messages to return (default=20)',
         required: false,
         type: 'integer',
-        default: 20,
         example: 20
     } */
   verifyRoles(ROLE.USER),
