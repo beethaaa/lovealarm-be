@@ -1,47 +1,52 @@
+const { sendNotification } = require("../firebase/config");
 const { ensureDbReady, mapDbError } = require("../helpers/dbError");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
+const User = require("../models/User")
 
 const registerMessageHandlers = (io, socket, onlineUsers) => {
-  socket.on("conversation:join", async (conversationId, callback) => {
-    try {
-      if (!conversationId) {
-        return callback?.({
-          success: false,
-          message: "conversationId is required",
-        });
-      }
-      const conversation = await Conversation.findOne({
-        _id: conversationId,
-        participants: socket.userId,
-        endedAt: { $eq: null },
-      });
-      
-      
-      if (!conversation) {
-        return callback({ success: false, message: "Conversation not found" });
-      }
+  const getParticipantList = async (conversationId) => {
+    const participants = await Conversation.findById(conversationId)
+      .select("participants")
+      .lean();
 
-      socket.join(conversationId);
-      return callback({ success: true, message: "Joined conversation" }); // important
-    } catch (error) {
-      console.error("Error in join_conversation:", error);
-      return callback({ success: false, message: "Server error" });
-    }
-  });
+    return participants["participants"];
+  };
 
   socket.on(
     "message:send",
-    async ({ content, type, conversationId }, callback) => {
+    async ({ content, type, conversationId, registrationToken}, callback) => {
       try {
         if (!conversationId) {
           return callback?.({
             success: false,
-            message: "conversationId is required. Join conversation first.",
+            message: "conversationId is required to ",
           });
         }
         if (!ensureDbReady(callback)) return;
 
+        const participants = await getParticipantList(conversationId);
+        if (
+          !participants ||
+          !Array.isArray(participants) ||
+          participants.length < 2
+        ) {
+          return callback?.({
+            success: false,
+            message: "Invalid participants list",
+          });
+        }
+        console.log("Participants: ",participants);
+        
+        const receiverId = participants.find((i) => !(i.equals(socket.userId)));
+        // const receiverIdString = receiverId.toString()
+        if (!receiverId) {
+          return callback?.({
+            success: false,
+            message: "Receiver not found",
+          });
+        }
+        
         const newMessage = await Message.create({
           conversationId,
           senderId: socket.userId,
@@ -49,7 +54,16 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           type,
         });
 
-        socket.to(conversationId).emit("message:new", newMessage);
+        socket.to(receiverId).emit("message:new", newMessage);
+
+        
+        // if (!onlineUsers[receiverIdString]) {
+        //   console.log("receiver not online");
+          
+        //   const userName = await User.findById(receiverId).select("profile.name")
+        //   sendNotification(conversationId, userName, content )
+        // }
+        
         return callback?.({ success: true, message: "Message sent" });
       } catch (error) {
         const e = mapDbError(error);
@@ -58,11 +72,6 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
     },
   );
 
-  socket.on("conversation:leave", (conversationId, callback) => {
-    socket.leave(conversationId);
-    return callback?.({ success: true, message: "Left conversation" });
-  });
-
   socket.on("message:seen", async ({ messageId, conversationId }, callback) => {
     try {
       // const conversationId = socket.data.conversationId;
@@ -70,7 +79,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
       if (!conversationId) {
         return callback?.({
           success: false,
-          message: "Join conversation first",
+          message: "Require conversationId",
         });
       }
 
@@ -81,7 +90,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         },
         { new: true },
       );
-      return callback?.({ success: true, message: "Seen", updated: updated});
+      return callback?.({ success: true, message: "Seen", updated: updated });
     } catch (error) {
       const e = mapDbError(error);
       return callback?.({ success: false, ...e });

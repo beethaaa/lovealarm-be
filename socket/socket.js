@@ -28,7 +28,7 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("A user connected: " + socket.userId);
     socket.join(socket.userId);
-    onlineUser[socket.userId] = socket.id
+    onlineUsers[socket.userId] = socket.id
 
     registerMessageHandlers(io, socket, onlineUsers);
 
