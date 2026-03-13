@@ -2382,6 +2382,193 @@
           }
         }
       }
+    },
+    "/api/fix-anniversary/": {
+      "post": {
+        "tags": [
+          "Fix Anniversary"
+        ],
+        "summary": "Add a new fix anniversary",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "1_DAY"
+                  },
+                  "days": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "months": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "years": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "after": {
+                    "type": "string",
+                    "example": "64f1a2b3c4d5e6f7a8b9c0d1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Fix Anniversary"
+        ],
+        "summary": "Get all fix anniversaries",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/fix-anniversary/{id}": {
+      "delete": {
+        "tags": [
+          "Fix Anniversary"
+        ],
+        "summary": "Delete fix anniversaries",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Fix Anniversary"
+        ],
+        "summary": "Update fix anniversaries",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "64f1a2b3c4d5e6f7a8b9c0d1"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "1_DAY"
+                  },
+                  "days": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "months": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "years": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "after": {
+                    "type": "string",
+                    "example": "64f1a2b3c4d5e6f7a8b9c0d1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

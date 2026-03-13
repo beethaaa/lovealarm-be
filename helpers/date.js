@@ -7,6 +7,4 @@ function addToDate(d, { days = 0, months = 0, years = 0 }) {
   return date;
 }
 
-const date = new Date("2026-10-10");
-const d = addToDate(new Date(date), { years: 1 });
-console.log(date, d);
+module.exports = { addToDate };

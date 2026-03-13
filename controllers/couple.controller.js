@@ -5,6 +5,7 @@ const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const Couple = require("../models/Couple");
 const Match = require("../models/Match");
 const User = require("../models/User");
+const FixAnniversary = require("../models/FixAnniversary");
 
 const couples = {};
 
@@ -48,9 +49,15 @@ const acceptCoupleMode = async (req, res) => {
         };
       }
 
+      const firstFixAnniversary = await FixAnniversary.findOne({
+        after: { $exists: false },
+      });
+
       await Couple.create({
         users: [userId, toUserId],
+        nextFixAnni: addToDate(new Date(), firstFixAnniversary),
       });
+
       await Match.updateOne(
         { users: { $all: [(userId, toUserId)] } },
         {
@@ -157,7 +164,9 @@ const getPartnerInfo = async (req, res) => {
       return res.status(403).json({ message: "You are not in couple mode!" });
 
     const partnerId = couple.users.find((item) => item !== userId);
-    const partner = await User.findById(partnerId);
+    const partner = await User.findById(partnerId).select(
+      "-password -updatedAt -createdAt -__v -setting -vip -isFirstLogin",
+    );
     if (!partner)
       return res.status(404).json({ message: "Cannot find your partner!" });
 

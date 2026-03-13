@@ -1,3 +1,5 @@
+const { default: mongoose } = require("mongoose");
+const { addToDate } = require("../helpers/date");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const Couple = require("../models/Couple");
 const CoupleMilestone = require("../models/CoupleMilestone");
@@ -9,18 +11,25 @@ const createNewMilestone = async (req, res) => {
     if (!couple)
       return res.status(400).json({ message: "You are not in Couple mode!" });
 
-    const { code, date } = req.body;
+    let { code, date } = req.body;
+
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
 
     await CoupleMilestone.create({
       coupleId: couple._id,
-      code,
+      code: code.toUpperCase(),
       date,
+      nextCelebrate: addToDate(new Date(date), { years: 1 }),
       createdBy: userId,
     });
 
     res
       .status(201)
-      .json({ message: `${code} milestone is created successfully!` });
+      .json({
+        message: `${code.toUpperCase()} milestone is created successfully!`,
+      });
   } catch (error) {
     serverErrorMessageRes(res, error);
   }

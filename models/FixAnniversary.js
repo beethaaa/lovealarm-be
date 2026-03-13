@@ -20,8 +20,8 @@ const FixAnniversarySchema = new Schema({
   },
   after: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    ref: "FixAnniversary",
   },
 });
 
-module.exports = mongoose.model("FixAnniversarySchema", FixAnniversarySchema);
+module.exports = mongoose.model("FixAnniversary", FixAnniversarySchema);
