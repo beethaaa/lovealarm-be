@@ -6,7 +6,9 @@ const {
 } = require("../constraints/loveRequestStatus");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const LoveRequest = require("../models/LoveRequest");
+const { getIo } = require("../socket/socket");
 
+const io = getIo();
 const getLoveRequest = async (req, res) => {
   try {
     const userId = req.userId;
@@ -51,6 +53,12 @@ const createLoveRequest = async (req, res) => {
       fromUserId: fromUserId,
       toUserId: toUserId,
     });
+
+    io.to(toUserId).emit("love-request:send", {
+      fromUserId: fromUserId,
+      message: "Someone is having a crush on you!",
+    });
+
     return res.status(201).json({
       success: true,
       message: "Love request created successfully!",
