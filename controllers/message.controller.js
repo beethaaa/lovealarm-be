@@ -1,14 +1,29 @@
+const { default: mongoose } = require("mongoose");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
+const { success } = require("zod");
+const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
 
 const fetchMessage = async (req, res) => {
   try {
-    const { conversationId, beforeId, limit = 20 } = req.params;
+    const { conversationId, beforeId, limit = 20 } = req.query;
     const userId = req.userId;
-
     if (!conversationId) {
       return res.status(400).json({
         success: false,
         message: "conversationId is required",
+      });
+    }
+    if (mongoose.Types.ObjectId.isValid(conversationId) && !conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "invalid conversationId format",
+      });
+    }
+    if (beforeId && !mongoose.Types.ObjectId.isValid(beforeId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid beforeId format",
       });
     }
     if (limit && isNaN(Number(limit))) {
@@ -31,23 +46,31 @@ const fetchMessage = async (req, res) => {
         message: "Conversation not found",
       });
     }
-    if (!conversation.participants.includes(userId)) {
+    if (
+      !conversation.participants.some(
+        (participant) => participant.toString() === userId,
+      )
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not verified to access this conversation",
       });
     }
 
-    const query = { conversationId };
+    let query = { conversationId, isDeleted: false };
 
     if (beforeId) {
-      query = { ...query, _id: { $lt: beforeId } };
+      query._id = { $lt: beforeId };
     }
 
-    const messages = await Message.find({ query })
+    const messages = await Message.find(query)
       .sort({ _id: -1 })
       .limit(Number(limit));
-    return res.status(200).json({ messages });
+    return res.status(200).json({
+      success: true,
+      message: "Messages fetched successfully",
+      data: messages,
+    });
   } catch (error) {
     serverErrorMessageRes(res, error);
   }

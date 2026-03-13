@@ -5,6 +5,8 @@ const registerMessageHandlers = require("./message.socket");
 let ioInstance;
 
 const initSocket = (server) => {
+  const onlineUsers = {};
+
   if (ioInstance) {
     console.log("Socket Io already initialized. Return existing one");
     return ioInstance;
@@ -26,10 +28,12 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("A user connected: " + socket.userId);
     socket.join(socket.userId);
+    onlineUser[socket.userId] = socket.id
 
-    registerMessageHandlers(io, socket);
+    registerMessageHandlers(io, socket, onlineUsers);
 
     socket.on("disconnect", () => {
+      delete onlineUsers[socket.userId]
       console.log("user disconnected");
     });
   });

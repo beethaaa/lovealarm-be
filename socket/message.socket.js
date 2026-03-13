@@ -2,7 +2,7 @@ const { ensureDbReady, mapDbError } = require("../helpers/dbError");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 
-const registerMessageHandlers = (io, socket) => {
+const registerMessageHandlers = (io, socket, onlineUsers) => {
   socket.on("conversation:join", async (conversationId, callback) => {
     try {
       if (!conversationId) {

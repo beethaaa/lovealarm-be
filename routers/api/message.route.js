@@ -32,6 +32,7 @@ router.route("/").get(
         default: 20,
         example: 20
     } */
+  verifyRoles(ROLE.USER),
   fetchMessage,
 );
 router
