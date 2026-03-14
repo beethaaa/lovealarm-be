@@ -1100,10 +1100,6 @@
                     "type": "string",
                     "example": "Hanoi"
                   },
-                  "avatarUrl": {
-                    "type": "string",
-                    "example": "https://example.com/avatar.jpg"
-                  },
                   "profile": {
                     "type": "object",
                     "properties": {
