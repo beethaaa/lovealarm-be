@@ -153,8 +153,9 @@ const deleteUser = async (req, res) => {
 };
 
 /*dedicated function for updating User profile*/
+/*dedicated function for updating User profile*/
 const updateUserProfile = async (req, res) => {
-  const allowedField = ["email", "avatarUrl", "profile", "location"];
+  const allowedField = ["email", "profile", "location"];
 
   try {
     const userId = req.userId;
@@ -182,6 +183,11 @@ const updateUserProfile = async (req, res) => {
         .status(403)
         .json({ success: false, message: updateData.error });
 
+    // Handle avatar file upload via Cloudinary
+    if (req.file) {
+      updateData.avatarUrl = req.file.path;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
@@ -197,6 +203,7 @@ const updateUserProfile = async (req, res) => {
     serverErrorMessageRes(res, error);
   }
 };
+
 
 const updatePassword = async (req, res) => {
   const userId = req?.userId;

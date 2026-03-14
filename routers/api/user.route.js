@@ -11,6 +11,7 @@ const {
 } = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
+const uploadCloud = require("../../middlewares/cloudinaryStorage");
 const router = express.Router();
 
 router
@@ -126,17 +127,18 @@ router
     /* #swagger.requestBody = {
       required: true,
       content: {
-        'application/json': {
+        'multipart/form-data': {
           schema: {
             type: 'object',
             properties: {
+              avatar: {
+                type: 'string',
+                format: 'binary',
+                description: 'Avatar image file'
+              },
               email: {
                 type: 'string',
                 example: 'abc@email.com'
-              },
-              avatarUrl: {
-                type: 'string',
-                example: 'https://example.com/avatar.jpg'
               },
               profile: {
                 type: 'object',
@@ -175,6 +177,7 @@ router
         }
       }
     } */
+    uploadCloud.single("avatar"),
     updateUserProfile,
   );
 
@@ -183,7 +186,7 @@ router.route("/me").get(
   // #swagger.summary = 'Get currently logged in user profile'
   // #swagger.security = [{ "bearerAuth": [] }]
   getCurrentlyLoggedInUser,
-)
+);
 
 router.route("/password").put(
   //#swagger.tags = ['Users']

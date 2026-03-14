@@ -1150,17 +1150,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  },
                   "email": {
                     "type": "string",
                     "example": "abc@email.com"
-                  },
-                  "avatarUrl": {
-                    "type": "string",
-                    "example": "https://example.com/avatar.jpg"
                   },
                   "profile": {
                     "type": "object",
@@ -2042,8 +2043,8 @@
         "summary": "Response to a love request",
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
