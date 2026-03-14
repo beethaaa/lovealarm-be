@@ -136,7 +136,7 @@ const acceptLoveRequest = async (loveRequestId) => {
   return updatedLoveRequest;
 };
 
-const createConversation = async (userId, loveRequest) => {
+const z = async (userId, loveRequest) => {
   const participants = [loveRequest.fromUserId.toString(), loveRequest.toUserId.toString()];
 
   if (!userId) {

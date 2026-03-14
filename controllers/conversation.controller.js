@@ -14,7 +14,7 @@ const getConversation = async (req, res) => {
     }
 
     const conversationList = await Conversation.find({
-      participant: { $in: [userId] },
+      participants: { $in: [userId] },
     });
 
     if (!conversationList || conversationList.length === 0) {
@@ -28,6 +28,42 @@ const getConversation = async (req, res) => {
       success: true,
       message: "Retrieve conversation successfully",
       data: conversationList,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const getConversationById = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const conversationId = req.params.conversationId;
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Conversation ID is required",
+      });
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+
+    if (!conversation.participants.some((id) => id.equals(userId))) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not a participant of this conversation",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Conversation found",
+      data: conversation,
     });
   } catch (error) {
     serverErrorMessageRes(res, error);
@@ -109,7 +145,7 @@ const updateConversationType = async (conversationId, type) => {
     throw new Error("Conversation ID is required");
   }
   if (!type) {
-       throw new Error("Conversation type is required");  
+    throw new Error("Conversation type is required");
   }
 
   if (!allowedStatus(type)) {
@@ -150,14 +186,14 @@ const updateLastSeen = async (req, res) => {
       });
     }
 
-    if (!conversation.participants.includes(userId)) {
+    if (!conversation.participants.some((id) => id.equals(userId))) {
       return res.status(403).json({
         success: false,
         message: "You are not a participant of this conversation",
       });
     }
 
-    conversation.lastSeen.set( userId, messageId );
+    conversation.lastSeen.set(userId, messageId);
     await conversation.save();
 
     return res
@@ -172,13 +208,13 @@ const endConversation = async (req, res) => {
   try {
     const userId = req.userId;
     const { conversationId } = req.body;
-    
-    if (!userId) {  
-      return res.status(400).json({  
-        success: false,  
-        message: "User ID is required",  
-      });  
-    }  
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
     // Check if conversationId exists
     if (!conversationId) {
       return res.status(400).json({
@@ -197,7 +233,7 @@ const endConversation = async (req, res) => {
     }
 
     // Check if user is a participant
-    if (!conversation.participants.includes(userId)) {
+    if (!conversation.participants.some((id) => id.equals(userId))) {
       return res.status(403).json({
         success: false,
         message: "You are not a participant of this conversation",
@@ -235,4 +271,5 @@ module.exports = {
   updateConversationType,
   updateLastSeen,
   endConversation,
+  getConversationById
 };
