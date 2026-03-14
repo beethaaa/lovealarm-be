@@ -1,12 +1,12 @@
 const { cache } = require("../cache");
 
 const checkValidInterest = (interests) => {
-  const interestIds = new Set(
-    cache.interests.map((interest) => interest._id.toString()),
+  const cacheInterests = new Set(
+    cache.interests.map((interest) => interest.interest),
   );
 
   const notValid = interests.filter(
-    (interest) => !interestIds.has(interest.toString()),
+    (interest) => !cacheInterests.has(interest),
   );
 
   if (notValid.length > 0) {
@@ -17,12 +17,12 @@ const checkValidInterest = (interests) => {
 };
 
 const checkValidPersonalityTags = (personalityTags) => {
-  const personalityTagIds = new Set(
-    cache.personalityTags.map((tag) => tag._id.toString()),
+  const cachePersonalityTags = new Set(
+    cache.personalityTags.map((tag) => tag.tag),
   );
 
   const notValid = personalityTags.filter(
-    (tag) => !personalityTagIds.has(tag.toString()),
+    (tag) => !cachePersonalityTags.has(tag),
   );
 
   if (notValid.length > 0) {

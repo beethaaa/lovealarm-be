@@ -42,11 +42,11 @@ const UserSchema = new Schema(
       gender: { type: Number, default: GENDER.MALE },
       birthday: { type: Date },
       interest: {
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interest" }],
+        type: [String],
         default: [],
       },
       personalityTags: {
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: "PersonalityTag" }],
+        type: [String],
         default: [],
       },
     },
