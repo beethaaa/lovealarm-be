@@ -11,6 +11,7 @@ const {
 } = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
+const uploadCloud = require("../../middlewares/cloudinaryStorage");
 const router = express.Router();
 
 router
@@ -126,10 +127,15 @@ router
     /* #swagger.requestBody = {
       required: true,
       content: {
-        'application/json': {
+        'multipart/form-data': {
           schema: {
             type: 'object',
             properties: {
+              avatar: {
+                type: 'string',
+                format: 'binary',
+                description: 'Avatar image file'
+              },
               email: {
                 type: 'string',
                 example: 'abc@email.com'
@@ -175,6 +181,7 @@ router
         }
       }
     } */
+    uploadCloud.single("avatar"),
     updateUserProfile,
   );
 

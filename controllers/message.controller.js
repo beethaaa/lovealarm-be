@@ -1,4 +1,79 @@
+const { default: mongoose } = require("mongoose");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
+const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
+
+const fetchMessage = async (req, res) => {
+  try {
+    const { conversationId, beforeId, limit = 20 } = req.query;
+    const userId = req.userId;
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        message: "conversationId is required",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({
+        success: false,
+        message: "invalid conversationId format",
+      });
+    }
+    if (beforeId && !mongoose.Types.ObjectId.isValid(beforeId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid beforeId format",
+      });
+    }
+    if (limit && isNaN(Number(limit))) {
+      return res.status(400).json({
+        success: false,
+        message: "limit must be a number",
+      });
+    }
+    if (beforeId && typeof beforeId !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "beforeId must be a string",
+      });
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+    if (
+      !conversation.participants.some(
+        (participant) => participant.toString() === userId,
+      )
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not verified to access this conversation",
+      });
+    }
+
+    let query = { conversationId, isDeleted: false };
+
+    if (beforeId) {
+      query._id = { $lt: beforeId };
+    }
+
+    const messages = await Message.find(query)
+      .sort({ _id: -1 })
+      .limit(Number(limit));
+    return res.status(200).json({
+      success: true,
+      message: "Messages fetched successfully",
+      data: messages,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
 
 const createMessage = async (req, res) => {
   try {
@@ -187,4 +262,5 @@ module.exports = {
   createMessage,
   editMessage,
   deleteMessage,
+  fetchMessage,
 };

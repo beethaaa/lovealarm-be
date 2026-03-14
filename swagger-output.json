@@ -1088,17 +1088,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  },
                   "email": {
                     "type": "string",
                     "example": "abc@email.com"
-                  },
-                  "location": {
-                    "type": "string",
-                    "example": "Hanoi"
                   },
                   "profile": {
                     "type": "object",
@@ -1923,6 +1924,9 @@
         "summary": "Response to a love request",
         "description": "",
         "responses": {
+          "201": {
+            "description": "Created"
+          },
           "400": {
             "description": "Bad Request"
           },
@@ -1961,6 +1965,67 @@
             }
           }
         }
+      }
+    },
+    "/api/messages/": {
+      "get": {
+        "tags": ["Message"],
+        "summary": "Fetch all messages",
+        "description": "",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "query",
+            "description": "Conversation ID to fetch messages from",
+            "required": true,
+            "example": "69a8e3d5efdc9c0d269991dc",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "beforeId",
+            "in": "query",
+            "description": "Fetch messages older than this message ID (pagination cursor)",
+            "required": false,
+            "example": "699da49ae5596118b557aad0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of messages to return (default=20)",
+            "required": false,
+            "example": 20,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/messages/{messageId}": {
