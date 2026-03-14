@@ -533,11 +533,47 @@
         "tags": [
           "Conversation"
         ],
-        "summary": "Get conversation by conversation ID",
+        "summary": "Get all user",
         "description": "",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Conversation list found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Retrieve conversation successfully",
+                  "data": [
+                    {
+                      "_id": "69b4df15dafde5d61328abf7",
+                      "type": 1,
+                      "participants": [
+                        "69b4c2ab96c2b385a0328575",
+                        "69b4c2b496c2b385a0328578"
+                      ],
+                      "lastSeen": {},
+                      "endedAt": null,
+                      "createdAt": "2026-03-14T04:07:49.467Z",
+                      "updatedAt": "2026-03-14T04:07:49.467Z",
+                      "__v": 0
+                    },
+                    {
+                      "_id": "70b4df15dafde5d61328ade7",
+                      "type": 1,
+                      "participants": [
+                        "69b4c2ab96c2b385a0328575",
+                        "69b4c2b496c2b385a0328578"
+                      ],
+                      "lastSeen": {},
+                      "endedAt": null,
+                      "createdAt": "2026-03-10T04:02:48.4Z",
+                      "updatedAt": "2026-03-11T04:03:49.32Z",
+                      "__v": 0
+                    }
+                  ]
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -602,6 +638,70 @@
             }
           }
         }
+      }
+    },
+    "/api/conversation/{conversationId}": {
+      "get": {
+        "tags": [
+          "Conversation"
+        ],
+        "summary": "Get a conversation by its ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Conversation ID",
+            "example": "69b4df15dafde5d61328abf7"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Conversation found",
+                  "data": {
+                    "_id": "69b4df15dafde5d61328abf7",
+                    "type": 1,
+                    "participants": [
+                      "69b4c2ab96c2b385a0328575",
+                      "69b4c2b496c2b385a0328578"
+                    ],
+                    "lastSeen": {},
+                    "endedAt": null,
+                    "createdAt": "2026-03-14T04:07:49.467Z",
+                    "updatedAt": "2026-03-14T04:07:49.467Z",
+                    "__v": 0
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/conversation/seen": {
@@ -2042,8 +2142,8 @@
         "summary": "Response to a love request",
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"

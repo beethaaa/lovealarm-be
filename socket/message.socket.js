@@ -39,7 +39,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         console.log("Participants: ",participants);
         
         const receiverId = participants.find((i) => !(i.equals(socket.userId)));
-        // const receiverIdString = receiverId.toString()
+        const receiverIdString = receiverId.toString()
         if (!receiverId) {
           return callback?.({
             success: false,
@@ -57,12 +57,12 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         socket.to(receiverId).emit("message:new", newMessage);
 
         
-        // if (!onlineUsers[receiverIdString]) {
-        //   console.log("receiver not online");
+        if (!onlineUsers[receiverIdString]) {
+          console.log("receiver not online");
           
-        //   const userName = await User.findById(receiverId).select("profile.name")
-        //   sendNotification(conversationId, userName, content )
-        // }
+          const userName = await User.findById(receiverId).select("profile.name")
+          sendNotification(conversationId, userName, content )
+        }
         
         return callback?.({ success: true, message: newMessage });
       } catch (error) {
