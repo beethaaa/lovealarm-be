@@ -7,6 +7,7 @@ const {
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const LoveRequest = require("../models/LoveRequest");
 const { getIo } = require("../socket/socket");
+const Conversation = require("../models/Conversation");
 
 const io = getIo();
 const getLoveRequest = async (req, res) => {
@@ -127,20 +128,55 @@ const editLoveRequest = async (req, res) => {
   }
 };
 
-const acceptLoveRequest = async (req, res, loveRequestId) => {
-  try {
-    const updatedLoveRequest = await updateStatus(
-      loveRequestId,
-      LoveRequestStatus.WAITING_START,
-    );
-    return res.status(200).json({
-      success: true,
-      message: "Love request accepted successfully!",
-      data: updatedLoveRequest,
-    });
-  } catch (error) {
-    serverErrorMessageRes(res, error);
+const acceptLoveRequest = async (loveRequestId) => {
+  const updatedLoveRequest = await updateStatus(
+    loveRequestId,
+    LoveRequestStatus.WAITING_START,
+  );
+  return updatedLoveRequest;
+};
+
+const createConversation = async (userId, loveRequest) => {
+  const participants = [loveRequest.fromUserId.toString(), loveRequest.toUserId.toString()];
+
+  if (!userId) {
+    throw new Error("User ID is required");
   }
+
+  if (!participants || !Array.isArray(participants)) {
+    throw new Error("Participants must be an array");
+  }
+
+  if (participants.length !== 2) {
+    throw new Error("Participants array must contain exactly 2 elements");
+  }
+
+  if (!participants.includes(userId)) {
+    const error = new Error("You must be one of the participants");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  if (participants[0] === participants[1]) {
+    throw new Error("Participants must be different users");
+  }
+
+  const existingConversation = await Conversation.findOne({
+    participant: { $all: participants },
+  });
+
+  if (existingConversation) {
+    const error = new Error("Conversation already exists between these users");
+    error.statusCode = 409;
+    error.existingConversation = existingConversation;
+    throw error;
+  }
+
+  const newConversation = await Conversation.create({
+    participants,
+  });
+
+  return newConversation;
 };
 
 const rejectLoveRequest = async (req, res, loveRequestId) => {
@@ -189,6 +225,8 @@ const responseToLoveRequest = async (req, res) => {
       });
     }
     const existedLoveRequest = await LoveRequest.findById(loveRequestId);
+    console.log(existedLoveRequest);
+
     if (!existedLoveRequest)
       return res
         .status(404)
@@ -205,8 +243,24 @@ const responseToLoveRequest = async (req, res) => {
       });
 
     switch (isAccepted) {
-      case true:
-        return await acceptLoveRequest(req, res, loveRequestId);
+      case true: {
+        
+        const newConversation = await createConversation(
+          userId,
+          existedLoveRequest,
+        );
+        if(newConversation){
+          const updatedLoveRequest = await acceptLoveRequest(loveRequestId);
+          return res.status(201).json({
+          success: true,
+          message:
+            "Love request accepted and conversation created successfully!",
+          loveRequest: updatedLoveRequest,
+          conversation: newConversation,
+        });
+        }
+        
+      }
       case false:
         return await rejectLoveRequest(req, res, loveRequestId);
       default:

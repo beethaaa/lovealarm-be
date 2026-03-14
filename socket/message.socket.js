@@ -64,7 +64,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         //   sendNotification(conversationId, userName, content )
         // }
         
-        return callback?.({ success: true, message: "Message sent" });
+        return callback?.({ success: true, message: newMessage });
       } catch (error) {
         const e = mapDbError(error);
         return callback?.({ success: false, ...e });
