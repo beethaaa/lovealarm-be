@@ -8,6 +8,7 @@ const {
   updateUserProfile,
   getUsers,
   getCurrentlyLoggedInUser,
+  getUserById,
 } = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -184,6 +185,13 @@ router
     uploadCloud.single("avatar"),
     updateUserProfile,
   );
+
+router.route("/:id").get(
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Get user by ID'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  getUserById,
+);
 
 router.route("/me").get(
   // #swagger.tags = ['Users']
