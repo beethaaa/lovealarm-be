@@ -75,6 +75,7 @@ const createLoveRequest = async (req, res) => {
     io.to(toUserId).emit("love-request:send", {
       fromUserId: fromUserId,
       message: "Someone is having a crush on you!",
+      loveRequestId: createdLoveRequest._id,
     });
 
     return res.status(201).json({
