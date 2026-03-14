@@ -1,9 +1,12 @@
+const { email } = require("zod");
 const { getRoleNameByKey } = require("../constraints/role");
 const { buildUpdateObject } = require("../helpers/buildUpdateObject");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const cache = require("../cache");
+const { checkValidInterest, checkValidPersonalityTags } = require("../helpers");
 
 const getUsers = async (req, res) => {
   try {
@@ -154,8 +157,6 @@ const deleteUser = async (req, res) => {
 
 /*dedicated function for updating User profile*/
 const updateUserProfile = async (req, res) => {
-  const allowedField = ["email", "avatarUrl", "profile", "location"];
-
   try {
     const userId = req.userId;
     const updateDetail = req.body;
@@ -176,7 +177,37 @@ const updateUserProfile = async (req, res) => {
       });
     }
 
-    const updateData = buildUpdateObject(updateDetail, allowedField);
+    const parseProfile = JSON.parse(updateDetail.profile);
+
+    const checkInterests = checkValidInterest(parseProfile.interest);
+    if (checkInterests.isError) {
+      return res.status(403).json({
+        success: false,
+        message: checkInterests.message,
+      });
+    }
+    const checkPersonalityTags = checkValidPersonalityTags(
+      parseProfile.personalityTags,
+    );
+    if (checkPersonalityTags.isError) {
+      return res.status(403).json({
+        success: false,
+        message: checkPersonalityTags.message,
+      });
+    }
+
+    const updateData = {
+      email: updateDetail.email,
+      location: updateDetail.location,
+      profile: {
+        name: parseProfile.name,
+        gender: parseProfile.gender,
+        birthday: parseProfile.birthday,
+        interest: parseProfile.interest,
+        personalityTags: parseProfile.personalityTags,
+      },
+    };
+
     if (updateData.error)
       return res
         .status(403)
@@ -187,7 +218,6 @@ const updateUserProfile = async (req, res) => {
       { $set: updateData },
       { runValidators: true, new: true },
     );
-    console.log(`Updated Succesfully: ${updatedUser}`);
     res.status(200).json({
       success: true,
       message: "User profile updated successfully!",

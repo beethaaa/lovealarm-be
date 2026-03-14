@@ -65,6 +65,11 @@ app.use(
   "/api/fix-anniversary",
   require("./routers/api/fixAnniversary.route.js"),
 );
+app.use("/api/friends", require("./routers/api/friend.route.js"));
+app.use(
+  "/api/personality-tags",
+  require("./routers/api/personalityTag.route.js"),
+);
 
 app.use((req, res, next) => {
   res

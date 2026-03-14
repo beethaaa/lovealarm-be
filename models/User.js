@@ -3,6 +3,8 @@ const { ROLE } = require("../constraints/role");
 const { GENDER } = require("../constraints/gender");
 const { MODE } = require("../constraints/mode");
 const Schema = mongoose.Schema;
+const Interest = require("./Interest.js");
+const PersonalityTag = require("./PersonalityTag.js");
 
 const UserSchema = new Schema(
   {
@@ -32,15 +34,21 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    location:{
+    location: {
       type: String,
     },
     profile: {
       name: { type: String, default: "" },
       gender: { type: Number, default: GENDER.MALE },
       birthday: { type: Date },
-      interest: { type: [String], default: [] },
-      personalityTags: { type: [String], default: [] },
+      interest: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interest" }],
+        default: [],
+      },
+      personalityTags: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: "PersonalityTag" }],
+        default: [],
+      },
     },
 
     setting: {

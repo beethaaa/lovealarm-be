@@ -134,9 +134,9 @@ router
                 type: 'string',
                 example: 'abc@email.com'
               },
-              avatarUrl: {
+              location: {
                 type: 'string',
-                example: 'https://example.com/avatar.jpg'
+                example: 'Hanoi'
               },
               profile: {
                 type: 'object',
@@ -183,7 +183,7 @@ router.route("/me").get(
   // #swagger.summary = 'Get currently logged in user profile'
   // #swagger.security = [{ "bearerAuth": [] }]
   getCurrentlyLoggedInUser,
-)
+);
 
 router.route("/password").put(
   //#swagger.tags = ['Users']

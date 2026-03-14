@@ -28,9 +28,7 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Logout from the application",
         "description": "",
         "responses": {
@@ -42,9 +40,7 @@
     },
     "/auth/change-pass": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Change password (require login)",
         "description": "",
         "responses": {
@@ -87,9 +83,7 @@
     },
     "/auth/reset-password": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Reset password after verifying OTP",
         "description": "",
         "responses": {
@@ -124,9 +118,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login to the application",
         "description": "",
         "responses": {
@@ -158,9 +150,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "description": "",
         "responses": {
@@ -192,9 +182,7 @@
     },
     "/otp/send": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Request to send OTP through email",
         "description": "",
         "responses": {
@@ -226,9 +214,7 @@
     },
     "/otp/verify": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Verify OTP",
         "description": "",
         "responses": {
@@ -260,9 +246,7 @@
     },
     "/api/admin/user/{id}": {
       "put": {
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "summary": "Update user data by admin",
         "description": "",
         "parameters": [
@@ -325,10 +309,7 @@
                   "mode": {
                     "type": "number",
                     "example": 1,
-                    "enum": [
-                      1,
-                      2
-                    ]
+                    "enum": [1, 2]
                   },
                   "setting": {
                     "type": "object",
@@ -356,9 +337,7 @@
     },
     "/api/ble-session/": {
       "get": {
-        "tags": [
-          "BleSession"
-        ],
+        "tags": ["BleSession"],
         "summary": "get all current ble session",
         "description": "",
         "responses": {
@@ -376,9 +355,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "BleSession"
-        ],
+        "tags": ["BleSession"],
         "summary": "Create a new ble session (User only)",
         "description": "",
         "responses": {
@@ -418,9 +395,7 @@
     },
     "/api/blocks/": {
       "get": {
-        "tags": [
-          "Block"
-        ],
+        "tags": ["Block"],
         "summary": "Get block list of the user",
         "description": "",
         "responses": {
@@ -438,9 +413,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Block"
-        ],
+        "tags": ["Block"],
         "summary": "Block a user",
         "description": "",
         "responses": {
@@ -478,9 +451,7 @@
                     "example": "699da39ee5596118b557aad2"
                   }
                 },
-                "required": [
-                  "blockedId"
-                ]
+                "required": ["blockedId"]
               }
             }
           }
@@ -489,9 +460,7 @@
     },
     "/api/blocks/{id}": {
       "delete": {
-        "tags": [
-          "Block"
-        ],
+        "tags": ["Block"],
         "summary": "Unblock a user",
         "description": "",
         "parameters": [
@@ -530,9 +499,7 @@
     },
     "/api/conversation/": {
       "get": {
-        "tags": [
-          "Conversation"
-        ],
+        "tags": ["Conversation"],
         "summary": "Get conversation by conversation ID",
         "description": "",
         "responses": {
@@ -553,9 +520,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Conversation"
-        ],
+        "tags": ["Conversation"],
         "summary": "Create a new conversation",
         "description": "",
         "responses": {
@@ -606,9 +571,7 @@
     },
     "/api/conversation/seen": {
       "put": {
-        "tags": [
-          "Conversation"
-        ],
+        "tags": ["Conversation"],
         "summary": "Update last seen time of a conversation",
         "description": "",
         "responses": {
@@ -657,9 +620,7 @@
     },
     "/api/conversation/end": {
       "put": {
-        "tags": [
-          "Conversation"
-        ],
+        "tags": ["Conversation"],
         "summary": "End a conversation",
         "description": "",
         "responses": {
@@ -704,9 +665,7 @@
     },
     "/api/suggest-friends/": {
       "post": {
-        "tags": [
-          "Suggest Friends"
-        ],
+        "tags": ["Suggest Friends"],
         "summary": "Get a list of nearby friends based on array of nearby bleUuid",
         "description": "",
         "responses": {
@@ -743,9 +702,7 @@
     },
     "/api/users/": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get all users with pagination and filters",
         "description": "",
         "parameters": [
@@ -789,10 +746,7 @@
             "name": "roleKey",
             "in": "query",
             "description": "Filter by role keys (array)",
-            "example": [
-              "1",
-              "2"
-            ],
+            "example": ["1", "2"],
             "schema": {
               "type": "array"
             }
@@ -868,20 +822,14 @@
                               },
                               "interest": {
                                 "type": "array",
-                                "example": [
-                                  "music",
-                                  "travel"
-                                ],
+                                "example": ["music", "travel"],
                                 "items": {
                                   "type": "string"
                                 }
                               },
                               "personalityTags": {
                                 "type": "array",
-                                "example": [
-                                  "outgoing",
-                                  "creative"
-                                ],
+                                "example": ["outgoing", "creative"],
                                 "items": {
                                   "type": "string"
                                 }
@@ -997,20 +945,14 @@
                               },
                               "interest": {
                                 "type": "array",
-                                "example": [
-                                  "music",
-                                  "travel"
-                                ],
+                                "example": ["music", "travel"],
                                 "items": {
                                   "type": "string"
                                 }
                               },
                               "personalityTags": {
                                 "type": "array",
-                                "example": [
-                                  "outgoing",
-                                  "creative"
-                                ],
+                                "example": ["outgoing", "creative"],
                                 "items": {
                                   "type": "string"
                                 }
@@ -1073,9 +1015,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Create a new user (Admin only)",
         "description": "",
         "responses": {
@@ -1123,9 +1063,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update user profile",
         "description": "",
         "responses": {
@@ -1158,6 +1096,10 @@
                     "type": "string",
                     "example": "abc@email.com"
                   },
+                  "location": {
+                    "type": "string",
+                    "example": "Hanoi"
+                  },
                   "avatarUrl": {
                     "type": "string",
                     "example": "https://example.com/avatar.jpg"
@@ -1183,20 +1125,14 @@
                         "items": {
                           "type": "string"
                         },
-                        "example": [
-                          "music",
-                          "travel"
-                        ]
+                        "example": ["music", "travel"]
                       },
                       "personalityTags": {
                         "type": "array",
                         "items": {
                           "type": "string"
                         },
-                        "example": [
-                          "outgoing",
-                          "creative"
-                        ]
+                        "example": ["outgoing", "creative"]
                       }
                     }
                   }
@@ -1209,9 +1145,7 @@
     },
     "/api/users/me": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get currently logged in user profile",
         "description": "",
         "responses": {
@@ -1234,9 +1168,7 @@
     },
     "/api/users/password": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update user password",
         "description": "",
         "responses": {
@@ -1279,9 +1211,7 @@
     },
     "/api/users/role/{id}": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update user role (admin only)",
         "description": "",
         "parameters": [
@@ -1356,14 +1286,10 @@
                         "example": "Admin"
                       }
                     },
-                    "required": [
-                      "key"
-                    ]
+                    "required": ["key"]
                   }
                 },
-                "required": [
-                  "role"
-                ]
+                "required": ["role"]
               }
             }
           }
@@ -1372,9 +1298,7 @@
     },
     "/api/users/vip": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update user VIP status",
         "description": "",
         "responses": {
@@ -1436,10 +1360,7 @@
                     "example": "2025-12-31T23:59:59Z"
                   }
                 },
-                "required": [
-                  "isActive",
-                  "expiredAt"
-                ]
+                "required": ["isActive", "expiredAt"]
               }
             }
           }
@@ -1448,9 +1369,7 @@
     },
     "/api/users/{id}": {
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete a user by ID",
         "description": "",
         "parameters": [
@@ -1486,9 +1405,7 @@
     },
     "/api/couples/": {
       "get": {
-        "tags": [
-          "Couple"
-        ],
+        "tags": ["Couple"],
         "summary": "Get info of partner if you are in Couple mode",
         "description": "",
         "responses": {
@@ -1514,9 +1431,7 @@
     },
     "/api/couples/accept": {
       "post": {
-        "tags": [
-          "Couple"
-        ],
+        "tags": ["Couple"],
         "summary": "Accept Couple mode",
         "description": "",
         "responses": {
@@ -1553,9 +1468,7 @@
     },
     "/api/couples/leave": {
       "post": {
-        "tags": [
-          "Couple"
-        ],
+        "tags": ["Couple"],
         "summary": "Leave Couple mode",
         "description": "",
         "responses": {
@@ -1575,9 +1488,7 @@
     },
     "/api/couple-milestones/": {
       "get": {
-        "tags": [
-          "CoupleMilestone"
-        ],
+        "tags": ["CoupleMilestone"],
         "summary": "Get all couple milestones",
         "description": "",
         "responses": {
@@ -1598,9 +1509,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "CoupleMilestone"
-        ],
+        "tags": ["CoupleMilestone"],
         "summary": "Create new couple milestone",
         "description": "",
         "responses": {
@@ -1640,9 +1549,7 @@
     },
     "/api/couple-milestones/{milestoneId}": {
       "put": {
-        "tags": [
-          "CoupleMilestone"
-        ],
+        "tags": ["CoupleMilestone"],
         "summary": "Update a couple milestone",
         "description": "",
         "parameters": [
@@ -1676,9 +1583,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "CoupleMilestone"
-        ],
+        "tags": ["CoupleMilestone"],
         "summary": "Delete a couple milestone",
         "description": "",
         "parameters": [
@@ -1714,9 +1619,7 @@
     },
     "/api/challenges/": {
       "get": {
-        "tags": [
-          "Challenge"
-        ],
+        "tags": ["Challenge"],
         "summary": "Get all challenge",
         "description": "",
         "responses": {
@@ -1734,9 +1637,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Challenge"
-        ],
+        "tags": ["Challenge"],
         "summary": "Add a new challenge",
         "description": "",
         "responses": {
@@ -1804,9 +1705,7 @@
     },
     "/api/challenges/{id}": {
       "delete": {
-        "tags": [
-          "Challenge"
-        ],
+        "tags": ["Challenge"],
         "summary": "Delete a challenge",
         "description": "",
         "parameters": [
@@ -1837,9 +1736,7 @@
         ]
       },
       "patch": {
-        "tags": [
-          "Challenge"
-        ],
+        "tags": ["Challenge"],
         "summary": "Update a challenge",
         "description": "",
         "parameters": [
@@ -1920,9 +1817,7 @@
     },
     "/api/love-request/": {
       "get": {
-        "tags": [
-          "Love Request"
-        ],
+        "tags": ["Love Request"],
         "summary": "Get love requests received by the authenticated user",
         "description": "",
         "responses": {
@@ -1940,9 +1835,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Love Request"
-        ],
+        "tags": ["Love Request"],
         "summary": "Create a new love request to another user",
         "description": "",
         "responses": {
@@ -1979,9 +1872,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Love Request"
-        ],
+        "tags": ["Love Request"],
         "summary": "Update the status of a love request",
         "description": "",
         "responses": {
@@ -2020,11 +1911,7 @@
                   "status": {
                     "type": "string",
                     "description": "Possible values: PENDING, WAITING_START, WAITING_REPLY",
-                    "enum": [
-                      "PENDING",
-                      "WAITING_START",
-                      "WAITING_REPLY"
-                    ],
+                    "enum": ["PENDING", "WAITING_START", "WAITING_REPLY"],
                     "example": "PENDING"
                   }
                 }
@@ -2036,9 +1923,7 @@
     },
     "/api/love-request/accept": {
       "put": {
-        "tags": [
-          "Love Request"
-        ],
+        "tags": ["Love Request"],
         "summary": "Response to a love request",
         "description": "",
         "responses": {
@@ -2084,9 +1969,7 @@
     },
     "/api/messages/{messageId}": {
       "put": {
-        "tags": [
-          "Message"
-        ],
+        "tags": ["Message"],
         "summary": "Edit a message by message ID",
         "description": "",
         "parameters": [
@@ -2139,9 +2022,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Message"
-        ],
+        "tags": ["Message"],
         "summary": "Delete a message by message ID",
         "description": "",
         "parameters": [
@@ -2196,9 +2077,7 @@
     },
     "/api/statistics/gender-age-mode": {
       "get": {
-        "tags": [
-          "Statistic"
-        ],
+        "tags": ["Statistic"],
         "summary": "Get statistic group by age, gender, mode",
         "description": "",
         "responses": {
@@ -2218,9 +2097,7 @@
     },
     "/api/statistics/active-users": {
       "get": {
-        "tags": [
-          "Statistic"
-        ],
+        "tags": ["Statistic"],
         "summary": "Get statistic of active users",
         "description": "",
         "responses": {
@@ -2240,9 +2117,7 @@
     },
     "/api/ai/conversation-start": {
       "post": {
-        "tags": [
-          "Gemini AI"
-        ],
+        "tags": ["Gemini AI"],
         "summary": "Get conversation start",
         "description": "",
         "responses": {
@@ -2282,9 +2157,7 @@
     },
     "/api/interests/": {
       "post": {
-        "tags": [
-          "Interest"
-        ],
+        "tags": ["Interest"],
         "summary": "Add a new interest",
         "description": "",
         "responses": {
@@ -2321,9 +2194,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Interest"
-        ],
+        "tags": ["Interest"],
         "summary": "Get all interests",
         "description": "",
         "responses": {
@@ -2341,9 +2212,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Interest"
-        ],
+        "tags": ["Interest"],
         "summary": "Delete interests",
         "description": "",
         "responses": {
@@ -2385,9 +2254,7 @@
     },
     "/api/fix-anniversary/": {
       "post": {
-        "tags": [
-          "Fix Anniversary"
-        ],
+        "tags": ["Fix Anniversary"],
         "summary": "Add a new fix anniversary",
         "description": "",
         "responses": {
@@ -2443,9 +2310,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Fix Anniversary"
-        ],
+        "tags": ["Fix Anniversary"],
         "summary": "Get all fix anniversaries",
         "description": "",
         "responses": {
@@ -2468,9 +2333,7 @@
     },
     "/api/fix-anniversary/{id}": {
       "delete": {
-        "tags": [
-          "Fix Anniversary"
-        ],
+        "tags": ["Fix Anniversary"],
         "summary": "Delete fix anniversaries",
         "description": "",
         "parameters": [
@@ -2501,9 +2364,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Fix Anniversary"
-        ],
+        "tags": ["Fix Anniversary"],
         "summary": "Update fix anniversaries",
         "description": "",
         "parameters": [
@@ -2564,6 +2425,148 @@
                     "example": "64f1a2b3c4d5e6f7a8b9c0d1"
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/friends/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/personality-tags/": {
+      "get": {
+        "tags": ["Personality Tags"],
+        "summary": "Get all personality tags",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Personality Tags"],
+        "summary": "Create a new personality tag (Admin only)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tag": {
+                    "type": "string",
+                    "example": "Enthusiastic"
+                  }
+                },
+                "required": ["tag"]
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Personality Tags"],
+        "summary": "Update an existing personality tag (Admin only)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109ca"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "example": "Outgoing"
+                  }
+                },
+                "required": ["id", "tag"]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Personality Tags"],
+        "summary": "Delete a personality tag (Admin only)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109ca"
+                  }
+                },
+                "required": ["id"]
               }
             }
           }
