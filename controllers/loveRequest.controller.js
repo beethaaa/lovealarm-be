@@ -8,8 +8,25 @@ const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const LoveRequest = require("../models/LoveRequest");
 const { getIo } = require("../socket/socket");
 const Conversation = require("../models/Conversation");
+const Friend = require("../models/Friend");
 
 const io = getIo();
+
+const createFriendRecord = async (ownerId, friendId) => {
+  try {
+    if (!ownerId || !friendId)
+      throw new Error("Owner ID and Friend ID are required");
+
+    const newFriend = await Friend.create({
+      ownerId,
+      friendId,
+    });
+    return newFriend;
+  } catch (error) {
+    return error;
+  }
+};
+
 const getLoveRequest = async (req, res) => {
   try {
     const userId = req.userId;
@@ -129,71 +146,79 @@ const editLoveRequest = async (req, res) => {
 };
 
 const acceptLoveRequest = async (loveRequestId) => {
-  const updatedLoveRequest = await updateStatus(
-    loveRequestId,
-    LoveRequestStatus.WAITING_START,
-  );
-  return updatedLoveRequest;
+  const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
+  if (deleted.deletedCount === 1) {
+    return true;
+  }
 };
 
-const createConversation = async (userId, loveRequest) => {
-  const participants = [loveRequest.fromUserId.toString(), loveRequest.toUserId.toString()];
-
-  if (!userId) {
-    throw new Error("User ID is required");
-  }
-
-  if (!participants || !Array.isArray(participants)) {
-    throw new Error("Participants must be an array");
-  }
-
-  if (participants.length !== 2) {
-    throw new Error("Participants array must contain exactly 2 elements");
-  }
-
-  if (!participants.includes(userId)) {
-    const error = new Error("You must be one of the participants");
-    error.statusCode = 403;
-    throw error;
-  }
-
-  if (participants[0] === participants[1]) {
-    throw new Error("Participants must be different users");
-  }
-
-  const existingConversation = await Conversation.findOne({
-    participant: { $all: participants },
-  });
-
-  if (existingConversation) {
-    const error = new Error("Conversation already exists between these users");
-    error.statusCode = 409;
-    error.existingConversation = existingConversation;
-    throw error;
-  }
-
-  const newConversation = await Conversation.create({
-    participants,
-  });
-
-  return newConversation;
-};
-
-const rejectLoveRequest = async (req, res, loveRequestId) => {
+const deleteLoveRequest = async (loveRequestId) => {
   try {
     const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
     if (deleted.deletedCount === 0) {
-      return res.status(404).json({
+      return {
         success: false,
         message: "Love request not found!",
-      });
+      };
     }
-    return res.status(200).json({
+    return {
       success: true,
-      message: "Love request rejected successfully!",
-    });
+      message: "Love request deleted successfully!",
+    };
   } catch (error) {
-    serverErrorMessageRes(res, error);
+    return error;
+  }
+};
+
+const createConversation = async (userId, loveRequest) => {
+  try {
+    const participants = [
+      loveRequest.fromUserId.toString(),
+      loveRequest.toUserId.toString(),
+    ];
+
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    if (!participants || !Array.isArray(participants)) {
+      throw new Error("Participants must be an array");
+    }
+
+    if (participants.length !== 2) {
+      throw new Error("Participants array must contain exactly 2 elements");
+    }
+
+    if (!participants.includes(userId)) {
+      const error = new Error("You must be one of the participants");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (participants[0] === participants[1]) {
+      throw new Error("Participants must be different users");
+    }
+
+    const existingConversation = await Conversation.findOne({
+      participant: { $all: participants },
+    });
+
+    if (existingConversation) {
+      const error = new Error(
+        "Conversation already exists between these users",
+      );
+      error.statusCode = 409;
+      error.existingConversation = existingConversation;
+      throw error;
+    }
+
+    const newConversation = await Conversation.create({
+      participants,
+    });
+
+    return newConversation;
+  } catch (error) {
+    return error;
   }
 };
 
@@ -244,25 +269,33 @@ const responseToLoveRequest = async (req, res) => {
 
     switch (isAccepted) {
       case true: {
-        
         const newConversation = await createConversation(
           userId,
           existedLoveRequest,
         );
-        if(newConversation){
-          const updatedLoveRequest = await acceptLoveRequest(loveRequestId);
+        if (newConversation && !(newConversation instanceof Error)) {
+          const newFriendRecord = await createFriendRecord(
+            userId,
+            existedLoveRequest.fromUserId,
+          );
+          if (newFriendRecord instanceof Error) {
+            return res.status(500).json({
+              success: false,
+              message: "Error occurred while creating friend record!",
+            });
+          }
+          const deleteRequest = await deleteLoveRequest(loveRequestId);
           return res.status(201).json({
-          success: true,
-          message:
-            "Love request accepted and conversation created successfully!",
-          loveRequest: updatedLoveRequest,
-          conversation: newConversation,
-        });
+            success: true,
+            message:
+              "Love request accepted and conversation created successfully!",
+            conversation: newConversation,
+            deletedLoveRequest: deleteRequest,
+          });
         }
-        
       }
       case false:
-        return await rejectLoveRequest(req, res, loveRequestId);
+        return await deleteLoveRequest(loveRequestId);
       default:
         return res.status(400).json({
           success: false,
