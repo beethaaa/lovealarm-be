@@ -19,4 +19,6 @@ const LoveRequestSchema = new Schema(
   { timestamps: true },
 );
 
+LoveRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+
 module.exports = mongoose.model("LoveRequest", LoveRequestSchema);
