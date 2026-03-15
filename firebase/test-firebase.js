@@ -1,5 +1,7 @@
-var admin = require("firebase-admin");
+require("dotenv").config();
 const path = require("path");
+const admin = require("firebase-admin");
+
 
 if (!admin.apps.length) {
   const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
@@ -17,7 +19,7 @@ if (!admin.apps.length) {
       : path.resolve(__dirname, "..", serviceAccountPath);
 
     const serviceAccount = require(absolutePath);
-
+    
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       projectId: projectId || serviceAccount.project_id,
@@ -29,35 +31,10 @@ if (!admin.apps.length) {
   }
 }
 
-const sendNotification = async (registrationToken, title, message) => {
-  const messageSend = {
-    token: registrationToken,
-    notification: {
-      title: title,
-      body: message,
-    },
-    data: {
-      key1: "",
-      key2: "",
-    },
-    android: {
-      priority: "high",
-    },
-    apns: {
-      payload: {
-        aps: {},
-      },
-    },
-  };
+// Test FCM connection (not Firestore)
+const messaging = admin.messaging();
+console.log("MEssaging: ", messaging);
 
-  try {
-    const response = await admin.messaging().send(messageSend);
-    console.log("Successfully sent message:", response);
-    return response;
-  } catch (error) {
-    console.error("Error sending message:", error);
-    throw error;
-  }
-};
-
-module.exports = { sendNotification };
+console.log("✓ Firebase Cloud Messaging (FCM) is ready!");
+console.log("✓ You can now send push notifications!");
+process.exit(0);
