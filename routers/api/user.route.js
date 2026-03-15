@@ -186,18 +186,18 @@ router
     updateUserProfile,
   );
 
-router.route("/:id").get(
-  // #swagger.tags = ['Users']
-  // #swagger.summary = 'Get user by ID'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  getUserById,
-);
-
 router.route("/me").get(
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Get currently logged in user profile'
   // #swagger.security = [{ "bearerAuth": [] }]
   getCurrentlyLoggedInUser,
+);
+
+router.route("/profile/:id").get(
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Get user by ID'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  getUserById,
 );
 
 router.route("/password").put(

@@ -75,6 +75,7 @@ const createLoveRequest = async (req, res) => {
     io.to(toUserId).emit("love-request:send", {
       fromUserId: fromUserId,
       message: "Someone is having a crush on you!",
+      loveRequestId: createdLoveRequest._id,
     });
 
     return res.status(201).json({
@@ -146,9 +147,18 @@ const editLoveRequest = async (req, res) => {
 };
 
 const acceptLoveRequest = async (loveRequestId) => {
-  const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
-  if (deleted.deletedCount === 1) {
-    return true;
+  try {
+    const updatedLoveRequest = await updateStatus(
+      loveRequestId,
+      LoveRequestStatus.WAITING_START,
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Love request accepted successfully!",
+      data: updatedLoveRequest,
+    });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
   }
 };
 

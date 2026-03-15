@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const CoupleSchema = new Schema(
   {
-    users: [mongoose.Types.ObjectId],
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     startedAt: {
       //user can update this field instead of createdAt (timestamp)
       type: Date,

@@ -61,7 +61,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           console.log("receiver not online");
           
           const userName = await User.findById(receiverId).select("profile.name")
-          sendNotification(conversationId, userName, content )
+          // sendNotification(conversationId, userName, content )
         }
         
         return callback?.({ success: true, message: newMessage });
@@ -74,7 +74,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
 
   socket.on("message:seen", async ({ messageId, conversationId }, callback) => {
     try {
-      // const conversationId = socket.data.conversationId;
+      const conversationId = socket.data.conversationId;
 
       if (!conversationId) {
         return callback?.({
