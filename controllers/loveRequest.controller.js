@@ -9,23 +9,16 @@ const LoveRequest = require("../models/LoveRequest");
 const { getIo } = require("../socket/socket");
 const Conversation = require("../models/Conversation");
 const Friend = require("../models/Friend");
+const {
+  editStatus,
+  getMatchByUser,
+  handleCreateMatchForLoveRequest,
+} = require("../services/match.service");
+const { createFriendRecord } = require("../services/friend.service");
+const MatchStatus = require("../constraints/matchStatus");
+const { createConversation } = require("../services/conversation.service");
 
 const io = getIo();
-
-const createFriendRecord = async (ownerId, friendId) => {
-  try {
-    if (!ownerId || !friendId)
-      throw new Error("Owner ID and Friend ID are required");
-
-    const newFriend = await Friend.create({
-      ownerId,
-      friendId,
-    });
-    return newFriend;
-  } catch (error) {
-    return error;
-  }
-};
 
 const getLoveRequest = async (req, res) => {
   try {
@@ -39,6 +32,24 @@ const getLoveRequest = async (req, res) => {
     });
   } catch (error) {
     serverErrorMessageRes(res, error);
+  }
+};
+
+const deleteLoveRequest = async (loveRequestId) => {
+  try {
+    const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
+    if (deleted.deletedCount === 0) {
+      return {
+        success: false,
+        message: "Love request not found!",
+      };
+    }
+    return {
+      success: true,
+      message: "Love request deleted successfully!",
+    };
+  } catch (error) {
+    return error;
   }
 };
 
@@ -71,6 +82,7 @@ const createLoveRequest = async (req, res) => {
       fromUserId: fromUserId,
       toUserId: toUserId,
     });
+    const newMatch = await handleCreateMatchForLoveRequest(fromUserId, toUserId);
 
     io.to(toUserId).emit("love-request:send", {
       fromUserId: fromUserId,
@@ -81,7 +93,8 @@ const createLoveRequest = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Love request created successfully!",
-      data: createdLoveRequest,
+      loveRequest: createdLoveRequest,
+      match: newMatch,
     });
   } catch (error) {
     serverErrorMessageRes(res, error);
@@ -162,81 +175,13 @@ const acceptLoveRequest = async (loveRequestId) => {
   }
 };
 
-const deleteLoveRequest = async (loveRequestId) => {
-  try {
-    const deleted = await LoveRequest.deleteOne({ _id: loveRequestId });
-    if (deleted.deletedCount === 0) {
-      return {
-        success: false,
-        message: "Love request not found!",
-      };
-    }
-    return {
-      success: true,
-      message: "Love request deleted successfully!",
-    };
-  } catch (error) {
-    return error;
-  }
-};
 
-const createConversation = async (userId, loveRequest) => {
-  try {
-    const participants = [
-      loveRequest.fromUserId.toString(),
-      loveRequest.toUserId.toString(),
-    ];
-
-    if (!userId) {
-      throw new Error("User ID is required");
-    }
-
-    if (!participants || !Array.isArray(participants)) {
-      throw new Error("Participants must be an array");
-    }
-
-    if (participants.length !== 2) {
-      throw new Error("Participants array must contain exactly 2 elements");
-    }
-
-    if (!participants.includes(userId)) {
-      const error = new Error("You must be one of the participants");
-      error.statusCode = 403;
-      throw error;
-    }
-
-    if (participants[0] === participants[1]) {
-      throw new Error("Participants must be different users");
-    }
-
-    const existingConversation = await Conversation.findOne({
-      participant: { $all: participants },
-    });
-
-    if (existingConversation) {
-      const error = new Error(
-        "Conversation already exists between these users",
-      );
-      error.statusCode = 409;
-      error.existingConversation = existingConversation;
-      throw error;
-    }
-
-    const newConversation = await Conversation.create({
-      participants,
-    });
-
-    return newConversation;
-  } catch (error) {
-    return error;
-  }
-};
 
 const responseToLoveRequest = async (req, res) => {
   try {
     const { isAccepted, loveRequestId } = req.body;
     const userId = req.userId;
-    // Validate required fields before proceeding with business logic
+
     if (
       loveRequestId === undefined ||
       loveRequestId === null ||
@@ -259,6 +204,7 @@ const responseToLoveRequest = async (req, res) => {
         message: "isAccepted must be a boolean value!",
       });
     }
+
     const existedLoveRequest = await LoveRequest.findById(loveRequestId);
     console.log(existedLoveRequest);
 
@@ -266,11 +212,13 @@ const responseToLoveRequest = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Love request not found!" });
+
     if (existedLoveRequest.toUserId.toString() !== userId)
       return res.status(403).json({
         success: false,
         message: "You are not allowed to edit this love request!",
       });
+
     if (existedLoveRequest.status !== LoveRequestStatus.PENDING)
       return res.status(400).json({
         success: false,
@@ -279,33 +227,81 @@ const responseToLoveRequest = async (req, res) => {
 
     switch (isAccepted) {
       case true: {
-        const newConversation = await createConversation(
-          userId,
-          existedLoveRequest,
-        );
-        if (newConversation && !(newConversation instanceof Error)) {
-          const newFriendRecord = await createFriendRecord(
+        try {
+          const newConversation = await createConversation(
+            userId,
+            existedLoveRequest,
+          );
+
+          // const newFriendRecord = await createFriendRecord(
+          //   userId,
+          //   existedLoveRequest.fromUserId,
+          // );
+
+          const getMatch = await getMatchByUser(
             userId,
             existedLoveRequest.fromUserId,
           );
-          if (newFriendRecord instanceof Error) {
-            return res.status(500).json({
+
+          if (!getMatch) {
+            return res.status(404).json({
               success: false,
-              message: "Error occurred while creating friend record!",
+              message: "Match not found!",
             });
           }
-          const deleteRequest = await deleteLoveRequest(loveRequestId);
+
+          const editedMatch = await editStatus(
+            getMatch._id,
+            MatchStatus.MATCHED,
+          );
+
+          // const deleteRequest = await deleteLoveRequest(loveRequestId);
+
           return res.status(201).json({
             success: true,
             message:
               "Love request accepted and conversation created successfully!",
             conversation: newConversation,
-            deletedLoveRequest: deleteRequest,
+            // deletedLoveRequest: deleteRequest,
+            // friend: newFriendRecord,
+            editedMatch: editedMatch,
           });
+        } catch (innerError) {
+          throw innerError;
         }
       }
-      case false:
-        return await deleteLoveRequest(loveRequestId);
+
+      case false: {
+        try {
+          const deleted = await deleteLoveRequest(loveRequestId);
+
+          const getMatch = await getMatchByUser(
+            userId,
+            existedLoveRequest.fromUserId,
+          );
+
+          if (!getMatch) {
+            return res.status(404).json({
+              success: false,
+              message: "Match not found!",
+            });
+          }
+
+          const editedMatch = await editStatus(
+            getMatch._id,
+            MatchStatus.ENDED,
+          );
+          return res.status(200).json({
+            success: true,
+            message: "Love request rejected and match status updated!",
+            deletedLoveRequest: deleted,
+            editedMatch: editedMatch,
+          });
+        } catch (innerError) {
+          throw innerError;
+        }
+      }
+
       default:
         return res.status(400).json({
           success: false,
@@ -313,6 +309,11 @@ const responseToLoveRequest = async (req, res) => {
         });
     }
   } catch (error) {
+    if (error.status) {
+      return res
+        .status(error.status)
+        .json({ success: false, message: error.message });
+    }
     serverErrorMessageRes(res, error);
   }
 };
