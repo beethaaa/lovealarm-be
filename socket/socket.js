@@ -35,7 +35,7 @@ const initSocket = (server) => {
       // kick the old device off
       const oldSocket = io.sockets.sockets.get(oldSocketId);
       if (oldSocket) {
-        oldSocket.emit("force:disconnect", {
+        oldSocket.emit("disconnect:force", {
           reason: "Logged in on another device",
         });
         oldSocket.disconnect(true);
