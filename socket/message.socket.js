@@ -10,7 +10,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
       .select("participants")
       .lean();
 
-    return participants["participants"];
+    return participants?.participants || [];
   };
 
   socket.on(
@@ -20,7 +20,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         if (!conversationId) {
           return callback?.({
             success: false,
-            message: "conversationId is required to ",
+            message: "conversationId is required to send a message",
           });
         }
         if (!ensureDbReady(callback)) return;
@@ -39,15 +39,16 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         console.log("Participants: ",participants);
         
         const receiverId = participants.find((i) => !(i.equals(socket.userId)));
-        const receiverIdString = receiverId.toString()
         if (!receiverId) {
           return callback?.({
             success: false,
             message: "Receiver not found",
           });
         }
+        const receiverIdString = receiverId.toString()
         
-        const newMessage = await Message.create({
+        
+        const newMessage = await Message.new({
           conversationId,
           senderId: socket.userId,
           content,
@@ -55,7 +56,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         });
 
         socket.to(receiverId).emit("message:new", newMessage);
-
+        
         
         if (!onlineUsers[receiverIdString]) {
           console.log("receiver not online");
@@ -63,7 +64,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           const userName = await User.findById(receiverId).select("profile.name")
           // sendNotification(conversationId, userName, content )
         }
-        
+        await newMessage.save();
         return callback?.({ success: true, message: newMessage });
       } catch (error) {
         const e = mapDbError(error);
