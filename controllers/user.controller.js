@@ -74,7 +74,7 @@ const getUserById = async (req, res) => {
         message: "Unexpected error, no ID retrieved from current user",
       });
     }
-    const user = await User.findById(userId).select("profile").lean();
+    const user = await User.findById(userId).select("profile avatarUrl").lean();
     return res.status(200).json({
       success: true,
       data: user,
