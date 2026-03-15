@@ -5,6 +5,8 @@ const Message = require("../models/Message");
 const User = require("../models/User");
 
 const registerMessageHandlers = (io, socket, onlineUsers) => {
+  console.log("register message handler");
+
   const getParticipantList = async (conversationId) => {
     const participants = await Conversation.findById(conversationId)
       .select("participants")
@@ -17,6 +19,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
     "message:send",
     async ({ content, type, conversationId, registrationToken }, callback) => {
       try {
+        console.log("send: ", content);
+
         if (!conversationId) {
           return callback?.({
             success: false,
@@ -60,8 +64,11 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           content,
           type,
         });
+        console.log("emit: ", newMessage);
 
         socket.to(receiverId).emit("message:new", newMessage);
+
+        console.log("done emit");
 
         if (!onlineUsers[receiverIdString]) {
           console.log("receiver not online");
