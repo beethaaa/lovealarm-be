@@ -5,8 +5,6 @@ const Message = require("../models/Message");
 const User = require("../models/User");
 
 const registerMessageHandlers = (io, socket, onlineUsers) => {
-  console.log("register message handler");
-
   const getParticipantList = async (conversationId) => {
     const participants = await Conversation.findById(conversationId)
       .select("participants")
@@ -19,13 +17,6 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
     "message:send",
     async ({ content, type, conversationId, registrationToken }, callback) => {
       try {
-        console.log("send: ", {
-          content,
-          type,
-          conversationId,
-          registrationToken,
-        });
-
         if (!conversationId) {
           return callback?.({
             success: false,
@@ -45,12 +36,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
             message: "Invalid participants list",
           });
         }
-        console.log("Participants: ", participants);
-        console.log("include:", participants.includes(socket.userId));
 
         if (!participants.includes(socket.userId)) {
-          console.log(1);
-
           return callback?.({
             success: false,
             message: "You are not a participant in this conversation",
@@ -58,11 +45,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         }
 
         const receiverId = participants.find((i) => i !== socket.userId);
-        console.log("receiver:", receiverId);
 
         if (!receiverId) {
-          console.log(2);
-
           return callback?.({
             success: false,
             message: "Receiver not found",
@@ -76,15 +60,10 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           content,
           type,
         });
-        console.log("emit: ", newMessage, receiverId);
 
         socket.to(receiverId).emit("message:new", newMessage);
 
-        console.log("done emit");
-
         if (!onlineUsers[receiverIdString]) {
-          console.log("receiver not online");
-
           const userName =
             await User.findById(receiverId).select("profile.name");
           // sendNotification(conversationId, userName, content )
