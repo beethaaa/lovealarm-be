@@ -2,7 +2,10 @@ const { sendNotification } = require("../firebase/config");
 const { ensureDbReady, mapDbError } = require("../helpers/dbError");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
+const { pushToUser } = require("../services/pushNotification.service");
+
 const User = require("../models/User");
+const { isUserOnline } = require("../services/presence.service");
 
 const registerMessageHandlers = (io, socket, onlineUsers) => {
   const getParticipantList = async (conversationId) => {
@@ -15,7 +18,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
 
   socket.on(
     "message:send",
-    async ({ content, type, conversationId, registrationToken }, callback) => {
+    async ({ content, type, conversationId }, callback) => {
       try {
         if (!conversationId) {
           return callback?.({
@@ -61,12 +64,24 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           type,
         });
 
-        socket.to(receiverId).emit("message:new", newMessage);
+        socket.to(receiverIdString).emit("message:new", newMessage);
 
-        if (!onlineUsers[receiverIdString]) {
+        if (isUserOnline(receiverIdString)) {
+          console.log("receiver not online");
+
           const userName =
             await User.findById(receiverId).select("profile.name");
           // sendNotification(conversationId, userName, content )
+          await pushToUser(receiverId, {
+            title: userName,
+            body: content || "You have a new message",
+            data: {
+              type: "chat_message",
+              conversationId: String(conversationId),
+              messageId: String(savedMessage._id),
+              senderId: String(socket.userId),
+            },
+          });
         }
         await newMessage.save();
         return callback?.({ success: true, message: newMessage });

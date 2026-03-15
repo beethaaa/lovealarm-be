@@ -80,6 +80,16 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    devices: [
+      {
+        deviceId: { type: String, required: true },
+        fcmToken: { type: String, required: true },
+        platform: { type: String, enum: ["android", "ios"] },
+        lastActive: { type: Date, default: Date.now },
+      },
+    ],
+
+    sessionVersion: { type: Number, default: 0 }, // invalidate old logins
   },
   { timestamps: true },
 );
