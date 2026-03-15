@@ -12,7 +12,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
       .select("participants")
       .lean();
 
-    return participants?.participants || [];
+    return participants?.participants.map((item) => String(item)) || [];
   };
 
   socket.on(
