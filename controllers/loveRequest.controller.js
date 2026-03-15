@@ -255,14 +255,14 @@ const responseToLoveRequest = async (req, res) => {
             MatchStatus.MATCHED,
           );
 
-          // const deleteRequest = await deleteLoveRequest(loveRequestId);
+          const deleteRequest = await deleteLoveRequest(loveRequestId);
 
           return res.status(201).json({
             success: true,
             message:
               "Love request accepted and conversation created successfully!",
             conversation: newConversation,
-            // deletedLoveRequest: deleteRequest,
+            deletedLoveRequest: deleteRequest,
             // friend: newFriendRecord,
             editedMatch: editedMatch,
           });
