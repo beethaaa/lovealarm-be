@@ -46,6 +46,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           });
         }
         console.log("Participants: ", participants);
+        console.log("include:", participants.includes(socket.userId));
 
         if (!participants.includes(socket.userId)) {
           console.log(1);
