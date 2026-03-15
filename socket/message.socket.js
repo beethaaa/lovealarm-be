@@ -57,7 +57,9 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           });
         }
 
-        const receiverId = participants.find((i) => !i.equals(socket.userId));
+        const receiverId = participants.find((i) => i !== socket.userId);
+        console.log("receiver:", receiverId);
+
         if (!receiverId) {
           console.log(2);
 
