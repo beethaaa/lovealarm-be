@@ -2746,6 +2746,10 @@
     },
     "/api/friends/": {
       "get": {
+        "tags": [
+          "Friends"
+        ],
+        "summary": "Get all friends",
         "description": "",
         "responses": {
           "200": {
@@ -2754,7 +2758,12 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/personality-tags/": {
