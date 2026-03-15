@@ -42,10 +42,10 @@ const initSocket = (server) => {
       }
     }
 
-    registerMessageHandlers(io, socket, onlineUsers);
+    registerMessageHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      delete onlineUsers[socket.userId];
+      
       console.log("user disconnected");
     });
   });
