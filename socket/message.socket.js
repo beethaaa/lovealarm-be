@@ -2,7 +2,7 @@ const { sendNotification } = require("../firebase/config");
 const { ensureDbReady, mapDbError } = require("../helpers/dbError");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
-const User = require("../models/User")
+const User = require("../models/User");
 
 const registerMessageHandlers = (io, socket, onlineUsers) => {
   const getParticipantList = async (conversationId) => {
@@ -15,7 +15,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
 
   socket.on(
     "message:send",
-    async ({ content, type, conversationId, registrationToken}, callback) => {
+    async ({ content, type, conversationId, registrationToken }, callback) => {
       try {
         if (!conversationId) {
           return callback?.({
@@ -36,19 +36,25 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
             message: "Invalid participants list",
           });
         }
-        console.log("Participants: ",participants);
-        
-        const receiverId = participants.find((i) => !(i.equals(socket.userId)));
+        console.log("Participants: ", participants);
+
+        if (!participants.includes(socket.userId)) {
+          return callback?.({
+            success: false,
+            message: "You are not a participant in this conversation",
+          });
+        }
+
+        const receiverId = participants.find((i) => !i.equals(socket.userId));
         if (!receiverId) {
           return callback?.({
             success: false,
             message: "Receiver not found",
           });
         }
-        const receiverIdString = receiverId.toString()
-        
-        
-        const newMessage = await Message.new({
+        const receiverIdString = receiverId.toString();
+
+        const newMessage = new Message({
           conversationId,
           senderId: socket.userId,
           content,
@@ -56,12 +62,12 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         });
 
         socket.to(receiverId).emit("message:new", newMessage);
-        
-        
+
         if (!onlineUsers[receiverIdString]) {
           console.log("receiver not online");
-          
-          const userName = await User.findById(receiverId).select("profile.name")
+
+          const userName =
+            await User.findById(receiverId).select("profile.name");
           // sendNotification(conversationId, userName, content )
         }
         await newMessage.save();
