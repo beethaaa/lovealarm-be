@@ -1,12 +1,11 @@
 const { Server } = require("socket.io");
 const allowedOrigins = require("../config/allowedOrigins");
 const registerMessageHandlers = require("./message.socket");
+const { userConnect } = require("../services/presence.service");
 
 let ioInstance;
 
 const initSocket = (server) => {
-  const onlineUsers = {};
-
   if (ioInstance) {
     console.log("Socket Io already initialized. Return existing one");
     return ioInstance;
@@ -22,18 +21,31 @@ const initSocket = (server) => {
 
   io.use((socket, next) => {
     socket.userId = socket.handshake.auth.userId;
+    socket.deviceId = socket.handshake.auth.deviceId;
     next();
   });
 
   io.on("connection", (socket) => {
     console.log("A user connected: " + socket.userId);
     socket.join(socket.userId);
-    onlineUsers[socket.userId] = socket.id
 
-    registerMessageHandlers(io, socket, onlineUsers);
+    const oldSocketId = userConnect(socket.userId, socket.id, socket.deviceId);
+
+    if (oldSocketId && oldSocketId !== socket.id) {
+      // kick the old device off
+      const oldSocket = io.sockets.sockets.get(oldSocketId);
+      if (oldSocket) {
+        oldSocket.emit("force:disconnect", {
+          reason: "Logged in on another device",
+        });
+        oldSocket.disconnect(true);
+      }
+    }
+
+    registerMessageHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      delete onlineUsers[socket.userId]
+      
       console.log("user disconnected");
     });
   });

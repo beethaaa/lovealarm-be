@@ -29,35 +29,78 @@ if (!admin.apps.length) {
   }
 }
 
-const sendNotification = async (registrationToken, title, message) => {
+// const sendNotification = async (registrationToken, title, message) => {
+//   const messageSend = {
+//     token: registrationToken,
+//     notification: {
+//       title: title,
+//       body: message,
+//     },
+//     data: {
+//       key1: "",
+//       key2: "",
+//     },
+//     android: {
+//       priority: "high",
+//     },
+//     apns: {
+//       payload: {
+//         aps: {},
+//       },
+//     },
+//   };
+
+//   try {
+//     const response = await admin.messaging().send(messageSend);
+//     console.log("Successfully sent message:", response);
+//     return response;
+//   } catch (error) {
+//     console.error("Error sending message:", error);
+//     throw error;
+//   }
+// };
+
+
+
+const toStringData = (data = {}) =>
+  Object.fromEntries(Object.entries(data).map(([k, v]) => [k, String(v)]));
+
+// returns: Promise<string> (messageId)
+const sendNotification = async (registrationToken, title, message, data = {}) => {
   const messageSend = {
     token: registrationToken,
     notification: {
-      title: title,
+      title,
       body: message,
     },
-    data: {
-      key1: "",
-      key2: "",
-    },
-    android: {
-      priority: "high",
-    },
-    apns: {
-      payload: {
-        aps: {},
-      },
-    },
+    data: toStringData(data),
+    android: { priority: "high" },
+    apns: { payload: { aps: {} } },
   };
 
-  try {
-    const response = await admin.messaging().send(messageSend);
-    console.log("Successfully sent message:", response);
-    return response;
-  } catch (error) {
-    console.error("Error sending message:", error);
-    throw error;
-  }
+  return admin.messaging().send(messageSend);
 };
 
-module.exports = { sendNotification };
+// returns: Promise<BatchResponse>
+const sendMulticastNotification = async (tokens = [], title, message, data = {}) => {
+  if (!tokens.length) {
+    return { successCount: 0, failureCount: 0, responses: [] };
+  }
+
+  return admin.messaging().sendEachForMulticast({
+    tokens,
+    notification: {
+      title,
+      body: message,
+    },
+    data: toStringData(data),
+    android: { priority: "high" },
+    apns: { payload: { aps: {} } },
+  });
+};
+
+module.exports = {
+  admin,
+  sendNotification,
+  sendMulticastNotification,
+};

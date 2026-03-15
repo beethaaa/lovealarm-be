@@ -2403,6 +2403,177 @@
         }
       }
     },
+    "/api/devices/my-devices": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Get all devices of authenticated user",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Device list retrieved successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "devices": [
+                    {
+                      "deviceId": "device-123",
+                      "fcmToken": "fcm-token-abc",
+                      "platform": "android",
+                      "lastActive": "2026-03-15T10:30:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/devices/register": {
+      "post": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Register or update a device for authenticated user",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Device registered successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Device registered successfully",
+                  "devices": [
+                    {
+                      "deviceId": "device-123",
+                      "fcmToken": "fcm-token-abc",
+                      "platform": "android",
+                      "lastActive": "2026-03-15T10:30:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "message": "deviceId, fcmToken, and platform are required"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "deviceId",
+                  "fcmToken",
+                  "platform"
+                ],
+                "properties": {
+                  "deviceId": {
+                    "type": "string",
+                    "example": "device-123"
+                  },
+                  "fcmToken": {
+                    "type": "string",
+                    "example": "fcm-token-abc"
+                  },
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "android",
+                      "ios"
+                    ],
+                    "example": "android"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/devices/remove/{deviceId}": {
+      "delete": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Remove a device of authenticated user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device ID to remove",
+            "example": "device-123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device removed successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Device removed successfully",
+                  "devices": []
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/statistics/gender-age-mode": {
       "get": {
         "tags": [
