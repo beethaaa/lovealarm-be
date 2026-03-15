@@ -19,7 +19,12 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
     "message:send",
     async ({ content, type, conversationId, registrationToken }, callback) => {
       try {
-        console.log("send: ", content);
+        console.log("send: ", {
+          content,
+          type,
+          conversationId,
+          registrationToken,
+        });
 
         if (!conversationId) {
           return callback?.({
@@ -43,6 +48,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
         console.log("Participants: ", participants);
 
         if (!participants.includes(socket.userId)) {
+          console.log(1);
+
           return callback?.({
             success: false,
             message: "You are not a participant in this conversation",
@@ -51,6 +58,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
 
         const receiverId = participants.find((i) => !i.equals(socket.userId));
         if (!receiverId) {
+          console.log(2);
+
           return callback?.({
             success: false,
             message: "Receiver not found",
@@ -64,7 +73,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           content,
           type,
         });
-        console.log("emit: ", newMessage);
+        console.log("emit: ", newMessage, receiverId);
 
         socket.to(receiverId).emit("message:new", newMessage);
 
