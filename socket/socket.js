@@ -35,10 +35,8 @@ const initSocket = (server) => {
       // kick the old device off
       const oldSocket = io.sockets.sockets.get(oldSocketId);
       if (oldSocket) {
-        userDisconnect(socket.id)
         oldSocket.emit("disconnect:force", {
           reason: "Logged in on another device",
-
         });
         oldSocket.disconnect(true);
       }
@@ -47,7 +45,6 @@ const initSocket = (server) => {
     registerMessageHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      userDisconnect(socket.id)
       console.log("user disconnected");
     });
   });
