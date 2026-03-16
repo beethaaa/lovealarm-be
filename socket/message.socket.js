@@ -73,7 +73,7 @@ const registerMessageHandlers = (io, socket) => {
             await User.findById(receiverId).select("profile.name");
           // sendNotification(conversationId, userName, content )
           const pushResult = await pushToUser(receiverId, {
-            title: userName,
+            title: JSON.stringify(userName),
             body: content || "You have a new message",
             data: {
               type: "chat_message",
@@ -84,7 +84,7 @@ const registerMessageHandlers = (io, socket) => {
           });
         // }
         await newMessage.save();
-        // console.log("Result: ", pushResult);
+        console.log("Result: ", pushResult);
         
         return callback?.({ success: true, message: newMessage });
       } catch (error) {
