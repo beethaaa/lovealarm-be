@@ -7,7 +7,7 @@ const Match = require("../models/Match");
 const User = require("../models/User");
 const FixAnniversary = require("../models/FixAnniversary");
 const { pushToUser } = require("../services/pushNotification.service");
-const { getDayDifference } = require("../helpers/date");
+const { getDayDifference, addToDate } = require("../helpers/date");
 
 const couples = {};
 
@@ -17,6 +17,8 @@ const acceptCoupleMode = async (req, res) => {
     const userId = req.userId;
     const { toUserId } = req.body;
 
+    console.log("couple to: ", toUserId);
+    
     if (toUserId === userId)
       return res
         .status(400)
@@ -30,7 +32,11 @@ const acceptCoupleMode = async (req, res) => {
           message: "You are in couple with other!",
         };
 
-      const coupleInMatches = await Match.findOne({ users: userId });
+      const coupleInMatches = await Match.findOne({
+        users: { $all: [userId, toUserId] },
+      });
+      console.log("coupleInMatches: ", coupleInMatches);
+      
       if (!coupleInMatches)
         throw {
           status: 400,
