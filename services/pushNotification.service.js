@@ -34,10 +34,14 @@ const pushToUser = async (userId, { title, body, data = {} }) => {
 
   const result = await sendMulticastNotification(tokens, title, body, data);
 
+  console.log("successCount:", result.successCount);
+  console.log("failureCount:", result.failureCount);
+
   // cleanup bad tokens
   const invalidTokens = [];
   result.responses.forEach((r, idx) => {
     if (!r.success) {
+      console.log("FAIL:", tokens[idx], "code:", r.error?.code, "msg:", r.error?.message);
       const code = r.error?.code || "";
       if (
         code.includes("registration-token-not-registered") ||
@@ -45,6 +49,9 @@ const pushToUser = async (userId, { title, body, data = {} }) => {
       ) {
         invalidTokens.push(tokens[idx]);
       }
+    }
+    else{
+      console.log("OK:", tokens[idx], "messageId:", r.messageId);
     }
   });
 

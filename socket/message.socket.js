@@ -7,7 +7,7 @@ const { pushToUser } = require("../services/pushNotification.service");
 const User = require("../models/User");
 const { isUserOnline } = require("../services/presence.service");
 
-const registerMessageHandlers = (io, socket, onlineUsers) => {
+const registerMessageHandlers = (io, socket) => {
   const getParticipantList = async (conversationId) => {
     const participants = await Conversation.findById(conversationId)
       .select("participants")
@@ -72,7 +72,7 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           const userName =
             await User.findById(receiverId).select("profile.name");
           // sendNotification(conversationId, userName, content )
-          await pushToUser(receiverId, {
+          const pushResult = await pushToUser(receiverId, {
             title: userName,
             body: content || "You have a new message",
             data: {
@@ -84,6 +84,8 @@ const registerMessageHandlers = (io, socket, onlineUsers) => {
           });
         }
         await newMessage.save();
+        // console.log("Result: ", pushResult);
+        
         return callback?.({ success: true, message: newMessage });
       } catch (error) {
         const e = mapDbError(error);
