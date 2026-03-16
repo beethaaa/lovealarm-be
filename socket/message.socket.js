@@ -66,27 +66,29 @@ const registerMessageHandlers = (io, socket) => {
 
         socket.to(receiverIdString).emit("message:new", newMessage);
         console.log(isUserOnline(receiverId));
-        
-          const userName =
-            await User.findById(receiverId).select("profile.name");
 
-            console.log(userName);
-            
-          // sendNotification(conversationId, userName, content )
-          const pushResult = await pushToUser(receiverId, {
-            title: userName.profile.name || "Love Alarm",
-            body: content || "You have a new message",
-            data: {
-              type: "chat_message",
-              conversationId: String(conversationId),
-              messageId: String(newMessage._id),
-              senderId: String(socket.userId),
-            },
-          });
+        const user = await User.findById(receiverId).select(
+          "profile.name, avatarUrl",
+        );
+
+        console.log(user);
+
+        // sendNotification(conversationId, userName, content )
+        const pushResult = await pushToUser(receiverId, {
+          title: user.profile.name || "Love Alarm",
+          body: content || "You have a new message",
+          data: {
+            imageUrl: user.avatarUrl,
+            type: "chat_message",
+            conversationId: String(conversationId),
+            messageId: String(newMessage._id),
+            senderId: String(socket.userId),
+          },
+        });
         // }
         await newMessage.save();
         console.log("Result: ", pushResult);
-        
+
         return callback?.({ success: true, message: newMessage });
       } catch (error) {
         const e = mapDbError(error);
