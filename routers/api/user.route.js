@@ -9,6 +9,7 @@ const {
   getUsers,
   getCurrentlyLoggedInUser,
   getUserById,
+  updateInitialUserProfile,
 } = require("../../controllers/user.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -242,7 +243,7 @@ router.route("/first-time").put(
         }
       }
     } */
-  updateUserProfile,
+  updateInitialUserProfile,
 );
 
 router.route("/me").get(
