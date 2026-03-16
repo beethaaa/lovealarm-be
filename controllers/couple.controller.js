@@ -48,6 +48,9 @@ const acceptCoupleMode = async (req, res) => {
         await pushToUser(toUserId, {
           title: `Couple Mode❤`,
           body: "Your partner is waiting for you acceptance...",
+          data: {
+            senderId: userId,
+          },
         });
 
         throw {
