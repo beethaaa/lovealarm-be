@@ -28,10 +28,12 @@ const createConversation = async (userId, loveRequest) => {
   if (participants[0] === participants[1]) {
     throw { status: 400, message: "Participants must be different users" };
   }
+  console.log("participants", participants);
 
   const existingConversation = await Conversation.findOne({
     participants: { $all: participants },
   });
+  console.log("existingConversation", existingConversation);
 
   if (existingConversation) {
     return existingConversation;

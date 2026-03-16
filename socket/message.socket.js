@@ -67,7 +67,7 @@ const registerMessageHandlers = (io, socket) => {
         socket.to(receiverIdString).emit("message:new", newMessage);
         console.log(isUserOnline(receiverId));
         
-        if (!isUserOnline(receiverId)) {
+        // if (!isUserOnline(receiverId)) {
           console.log("receiver not online");
 
           const userName =
@@ -86,7 +86,7 @@ const registerMessageHandlers = (io, socket) => {
               senderId: String(socket.userId),
             },
           });
-        }
+        // }
         await newMessage.save();
         console.log("Result: ", pushResult);
         
