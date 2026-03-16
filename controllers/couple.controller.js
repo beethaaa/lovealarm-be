@@ -18,7 +18,7 @@ const acceptCoupleMode = async (req, res) => {
     const { toUserId } = req.body;
 
     console.log("couple to: ", toUserId);
-    
+
     if (toUserId === userId)
       return res
         .status(400)
@@ -26,17 +26,24 @@ const acceptCoupleMode = async (req, res) => {
 
     await session.withTransaction(async () => {
       const dupplicate = await Couple.findOne({ users: userId });
-      if (dupplicate)
+      if (dupplicate) {
         throw {
           status: 400,
           message: "You are in couple with other!",
         };
+      }
 
+      const partnerCheckCouple = await Couple.findOne({ users: toUserId });
+      if (partnerCheckCouple) {
+        throw {
+          status: 400,
+          message: `He/She is in couple with other!`,
+        };
+      }
       const coupleInMatches = await Match.findOne({
         users: { $all: [userId, toUserId] },
       });
-      console.log("coupleInMatches: ", coupleInMatches);
-      
+
       if (!coupleInMatches)
         throw {
           status: 400,
@@ -84,7 +91,7 @@ const acceptCoupleMode = async (req, res) => {
         },
       );
       await User.updateMany(
-        { _id: { $in: currentCouple.users } },
+        { _id: { $in: [userId, toUserId] } },
         {
           $set: {
             mode: MODE.COUPLE.key,
