@@ -1,4 +1,5 @@
 const { getRoleNameByKey } = require("../constraints/role");
+const { buildUpdateObject } = require("../helpers/buildUpdateObject");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
