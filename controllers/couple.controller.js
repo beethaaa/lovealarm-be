@@ -7,6 +7,7 @@ const Match = require("../models/Match");
 const User = require("../models/User");
 const FixAnniversary = require("../models/FixAnniversary");
 const { pushToUser } = require("../services/pushNotification.service");
+const { getDayDifference } = require("../helpers/date");
 
 const couples = {};
 
@@ -189,7 +190,9 @@ const getPartnerInfo = async (req, res) => {
     if (!partner)
       return res.status(404).json({ message: "Cannot find your partner!" });
 
-    res.status(200).json(partner);
+    const days = getDayDifference(new Date(), couple.startedAt);
+
+    res.status(200).json({ days, partner });
   } catch (error) {
     serverErrorMessageRes(res, error);
   }
