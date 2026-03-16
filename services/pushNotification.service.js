@@ -23,6 +23,10 @@ const pushToUser = async (userId, { title, body, data = {} }) => {
     ),
   ];
 
+  console.log("Tokens: ", tokens);
+  console.log
+  
+
   if (!tokens.length) {
     return {
       sent: 0,

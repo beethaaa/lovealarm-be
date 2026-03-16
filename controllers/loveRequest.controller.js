@@ -233,6 +233,8 @@ const responseToLoveRequest = async (req, res) => {
             existedLoveRequest,
           );
 
+          console.log("newConversation", newConversation);
+          
           // const newFriendRecord = await createFriendRecord(
           //   userId,
           //   existedLoveRequest.fromUserId,

@@ -118,11 +118,7 @@ const createConversation = async (req, res) => {
     });
 
     if (existingConversation) {
-      return res.status(409).json({
-        success: false,
-        message: "Conversation already exists between these users",
-        data: existingConversation,
-      });
+      return existingConversation
     }
 
     // Create new conversation
