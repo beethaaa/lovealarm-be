@@ -65,8 +65,9 @@ const registerMessageHandlers = (io, socket) => {
         });
 
         socket.to(receiverIdString).emit("message:new", newMessage);
-
-        // if (!isUserOnline(receiverIdString)) {
+        console.log(isUserOnline(receiverId));
+        
+        if (!isUserOnline(receiverId)) {
           console.log("receiver not online");
 
           const userName =
@@ -76,7 +77,7 @@ const registerMessageHandlers = (io, socket) => {
             
           // sendNotification(conversationId, userName, content )
           const pushResult = await pushToUser(receiverId, {
-            title: JSON.stringify(userName),
+            title: userName.profile.name || "Love Alarm",
             body: content || "You have a new message",
             data: {
               type: "chat_message",
@@ -85,7 +86,7 @@ const registerMessageHandlers = (io, socket) => {
               senderId: String(socket.userId),
             },
           });
-        // }
+        }
         await newMessage.save();
         console.log("Result: ", pushResult);
         

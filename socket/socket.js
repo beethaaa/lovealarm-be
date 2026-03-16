@@ -28,7 +28,7 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("A user connected: " + socket.userId);
     socket.join(socket.userId);
-
+    console.log("DEVICE ID: " + socket.deviceId);
     const oldSocketId = userConnect(socket.userId, socket.id, socket.deviceId);
 
     if (oldSocketId && oldSocketId !== socket.id) {
@@ -45,7 +45,6 @@ const initSocket = (server) => {
     registerMessageHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      
       console.log("user disconnected");
     });
   });
