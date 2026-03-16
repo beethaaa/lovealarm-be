@@ -2,9 +2,22 @@ const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
 const { zodToJsonSchema } = require("zod-to-json-schema");
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+const GEMINI_KEYS = [
+  process.env.GEMINI_API_KEY1,
+  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY3,
+];
+let currentKey = 0;
+const getNextKey = () => {
+  const key = GEMINI_KEYS[currentKey];
+  currentKey = (currentKey + 1) % GEMINI_KEYS.length;
+  return key;
+};
+const getAiInstance = () => {
+  return new GoogleGenAI({
+    apiKey: getNextKey(),
+  });
+};
 
 const openerSchema = z
   .array(z.string())
@@ -12,35 +25,68 @@ const openerSchema = z
   .describe("Exactly 4 short conversation starters");
 
 const getConversationStart = async (req, res) => {
-  try {
-    const { interests } = req.body;
+  const { interests } = req.body;
 
-    const prompt = `
-      Tạo 4 câu bắt chuyện ngắn gọn, tự nhiên, thú vị.
-      Sở thích người kia: ${interests}
+  const prompt =
+    (!interests || interests === "")
+      ? `
+  Role: Dating expert.
+  Task: Viết 4 câu bắt chuyện tự nhiên, duyên dáng, không sáo rỗng.
+  Style: Ngôn ngữ nói, trẻ trung, tạo tò mò.
+  Rules:
+    Max 20 từ/câu.
+    Không emoji, không ngoặc kép.
+    Tránh: Chào em/bạn, làm quen.
+  `
+      : 
+  `
+  
+  
+  Role: Dating expert.
+  Task: Viết 4 câu bắt chuyện tự nhiên, duyên dáng, không sáo rỗng.
+  Context: Sở thích người kia: ${interests}
+  Style: Ngôn ngữ nói, trẻ trung, tạo tò mò.
+  Rules:
 
-      - Mỗi câu tối đa 20 từ
-      - Không emoji
-      - Không dùng dấu ngoặc kép
-      `;
+    Max 20 từ/câu.
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
+    Không emoji, không ngoặc kép.
 
-      config: {
-        responseMimeType: "application/json",
-        responseJsonSchema: zodToJsonSchema(openerSchema),
-        temperature: 0.7,
-      },
-    });
+    Tránh: Chào em/bạn, làm quen.
+  `;
 
-    const parsed = openerSchema.parse(JSON.parse(response.text));
+  // mỗi lần prompt sẽ thử 1 key mới
+  for (let i = 0; i < GEMINI_KEYS.length; i++) {
+    const apiKey = getNextKey(); // chuyển sang key mới
 
-    return res.json(parsed);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Gemini error" });
+    try {
+      console.log("Using Gemini key:", apiKey.slice(0, 10));
+
+      const ai = getAiInstance(apiKey);
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: zodToJsonSchema(openerSchema),
+          temperature: 0.7,
+        },
+      });
+
+      const parsed = openerSchema.parse(JSON.parse(response.text));
+
+      return res.json(parsed);
+    } catch (error) {
+      // nếu 1 key lỗi thì sẽ in ra lỗi và quay lại vòng lặp để thử key mới
+      console.error("Gemini failed with key:", apiKey.slice(0, 10));
+
+      if (i === GEMINI_KEYS.length - 1) {
+        return res.status(503).json({
+          error: "AI service temporarily unavailable",
+        });
+      }
+    }
   }
 };
 
