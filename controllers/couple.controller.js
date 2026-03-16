@@ -6,6 +6,7 @@ const Couple = require("../models/Couple");
 const Match = require("../models/Match");
 const User = require("../models/User");
 const FixAnniversary = require("../models/FixAnniversary");
+const { pushToUser } = require("../services/pushNotification.service");
 
 const couples = {};
 
@@ -43,6 +44,12 @@ const acceptCoupleMode = async (req, res) => {
 
       if (!couples[toUserId]) {
         couples[userId] = toUserId;
+        // Push notif to other partner
+        await pushToUser(toUserId, {
+          title: `Couple Mode❤`,
+          body: "Your partner is waiting for you acceptance...",
+        });
+
         throw {
           status: 200,
           message: "Wait for your partner accepting...",
@@ -74,6 +81,15 @@ const acceptCoupleMode = async (req, res) => {
           },
         },
       );
+
+      await pushToUser(toUserId, {
+        title: `Love Alarm❤`,
+        body: "Welcome to Couple Mode",
+      });
+      await pushToUser(userId, {
+        title: `Couple Mode❤`,
+        body: "Welcome to Couple Mode",
+      });
 
       delete couples[toUserId];
     });
