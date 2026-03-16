@@ -92,6 +92,7 @@ const sendMulticastNotification = async (tokens = [], title, message, data = {})
     notification: {
       title,
       body: message,
+      image: data.imageUrl
     },
     data: toStringData(data),
     android: { priority: "high" },
