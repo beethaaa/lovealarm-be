@@ -236,14 +236,32 @@ const updateUserProfile = async (req, res) => {
 };
 
 const updateInitialUserProfile = async (req, res) => {
-  const notAllowedField = ["role", "mode", "vip", "password"];
+  const allowedField = ["email", "location", "profile"];
 
   try {
     const userId = req.userId;
     const updateDetail = req.body;
-    const updateData = buildUpdateObject(updateDetail, notAllowedField);
+
+    let duplicate = null;
+    if (updateDetail.email) {
+      duplicate = await User.findOne({
+        email: updateDetail.email,
+        _id: { $ne: userId },
+      }).lean();
+    }
+
+    if (duplicate) {
+      return res.status(409).json({
+        success: false,
+        message: "Email is already in use!",
+      });
+    }
+
+    const updateData = buildUpdateObject(updateDetail, allowedField);
     if (updateData.error)
-      return res.status(403).json({ message: updateData.error });
+      return res
+        .status(403)
+        .json({ success: false, message: updateData.error });
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -251,9 +269,11 @@ const updateInitialUserProfile = async (req, res) => {
       { runValidators: true, new: true },
     );
     console.log(`Updated User: ${updatedUser}`);
-    res
-      .status(200)
-      .json({ message: "User profile updated successfully!", updatedUser });
+    res.status(200).json({
+      success: true,
+      message: "User profile updated successfully!",
+      updatedUser,
+    });
   } catch (error) {
     serverErrorMessageRes(res, error);
   }
