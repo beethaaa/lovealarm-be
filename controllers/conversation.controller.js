@@ -120,7 +120,11 @@ const createConversation = async (req, res) => {
     console.log("Existing Conversation: ", existingConversation);
     
     if (existingConversation) {
-      return existingConversation
+      return res.status(200).json({
+        success: true,
+        message: "Conversation already exists",
+        data: existingConversation,
+      });
     }
 
     // Create new conversation
