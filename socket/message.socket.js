@@ -71,6 +71,9 @@ const registerMessageHandlers = (io, socket) => {
 
           const userName =
             await User.findById(receiverId).select("profile.name");
+
+            console.log(userName);
+            
           // sendNotification(conversationId, userName, content )
           const pushResult = await pushToUser(receiverId, {
             title: JSON.stringify(userName),
