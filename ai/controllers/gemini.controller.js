@@ -28,53 +28,31 @@ const getConversationStart = async (req, res) => {
   const { interests } = req.body;
 
   const prompt =
-    !interests || interests === ""
+    (!interests || interests === "")
       ? `
-  Role: Bạn là một chuyên gia tâm lý và là người có sức hút lớn trên các ứng dụng hẹn hò. Bạn có lối nói chuyện dí dỏm, thông minh và cực kỳ tự nhiên.
-
-Task: Hãy viết 4 câu mở đầu tin nhắn (ice-breakers) để bắt đầu một cuộc trò chuyện mới.
-
-Style Guidelines:
-
-    Tuyệt đối tránh các câu chào hỏi rập khuôn hoặc quá trang trọng.
-
-    Tập trung vào việc tạo ra sự tò mò hoặc một sự đồng cảm nhẹ nhàng.
-
-    Ngôn ngữ sử dụng phải là ngôn ngữ nói hàng ngày của giới trẻ, gần gũi nhưng vẫn lịch sự.
-
-Constraints:
-
-    Mỗi câu tối đa 20 từ.
-
-    Không sử dụng emoji.
-
-    Không sử dụng dấu ngoặc kép.
-
-    Trả về danh sách thuần văn bản.
+  Role: Dating expert.
+  Task: Viết 4 câu bắt chuyện tự nhiên, duyên dáng, không sáo rỗng.
+  Style: Ngôn ngữ nói, trẻ trung, tạo tò mò.
+  Rules:
+    Max 20 từ/câu.
+    Không emoji, không ngoặc kép.
+    Tránh: Chào em/bạn, làm quen.
   `
       : 
   `
-  Role: Bạn là một chuyên gia tâm lý và là người có sức hút lớn trên các ứng dụng hẹn hò. Bạn có lối nói chuyện dí dỏm, thông minh và cực kỳ tự nhiên.
- Sở thích người kia: ${interests}
-Task: Hãy viết 4 câu mở đầu tin nhắn (ice-breakers) để bắt đầu một cuộc trò chuyện mới.
+  
+  
+  Role: Dating expert.
+  Task: Viết 4 câu bắt chuyện tự nhiên, duyên dáng, không sáo rỗng.
+  Context: Sở thích người kia: ${interests}
+  Style: Ngôn ngữ nói, trẻ trung, tạo tò mò.
+  Rules:
 
-Style Guidelines:
+    Max 20 từ/câu.
 
-    Tuyệt đối tránh các câu chào hỏi rập khuôn hoặc quá trang trọng.
+    Không emoji, không ngoặc kép.
 
-    Tập trung vào việc tạo ra sự tò mò hoặc một sự đồng cảm nhẹ nhàng.
-
-    Ngôn ngữ sử dụng phải là ngôn ngữ nói hàng ngày của giới trẻ, gần gũi nhưng vẫn lịch sự.
-
-Constraints:
-
-    Mỗi câu tối đa 20 từ.
-
-    Không sử dụng emoji.
-
-    Không sử dụng dấu ngoặc kép.
-
-    Trả về danh sách thuần văn bản.
+    Tránh: Chào em/bạn, làm quen.
   `;
 
   // mỗi lần prompt sẽ thử 1 key mới
