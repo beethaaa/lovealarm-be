@@ -110,14 +110,12 @@ const createConversation = async (req, res) => {
         success: false,
         message: "Participants must be different users",
       });
-    }
-    console.log("ControllerParticipants: ", participants);
+    }    
     
     // Check if conversation already exists between these participants
     const existingConversation = await Conversation.findOne({
       participants: { $all: participants },
     });
-    console.log("Existing Conversation: ", existingConversation);
     
     if (existingConversation) {
       return res.status(200).json({

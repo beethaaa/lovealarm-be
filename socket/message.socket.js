@@ -67,9 +67,6 @@ const registerMessageHandlers = (io, socket) => {
         socket.to(receiverIdString).emit("message:new", newMessage);
         console.log(isUserOnline(receiverId));
         
-        // if (!isUserOnline(receiverId)) {
-          console.log("receiver not online");
-
           const userName =
             await User.findById(receiverId).select("profile.name");
 
