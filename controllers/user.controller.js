@@ -177,6 +177,8 @@ const updateUserProfile = async (req, res) => {
     const userId = req.userId;
     const updateDetail = req.body;
 
+    console.log(updateDetail);
+
     //Validate duplicate Email if email field is provided in update request
     let duplicate = null;
     if (updateDetail.email) {
@@ -227,6 +229,30 @@ const updateUserProfile = async (req, res) => {
       message: "User profile updated successfully!",
       updatedUser,
     });
+  } catch (error) {
+    serverErrorMessageRes(res, error);
+  }
+};
+
+const updateInitialUserProfile = async (req, res) => {
+  const notAllowedField = ["role", "mode", "vip", "password"];
+
+  try {
+    const userId = req.userId;
+    const updateDetail = req.body;
+    const updateData = buildUpdateObject(updateDetail, notAllowedField);
+    if (updateData.error)
+      return res.status(403).json({ message: updateData.error });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { runValidators: true, new: true },
+    );
+    console.log(`Updated User: ${updatedUser}`);
+    res
+      .status(200)
+      .json({ message: "User profile updated successfully!", updatedUser });
   } catch (error) {
     serverErrorMessageRes(res, error);
   }
@@ -335,4 +361,5 @@ module.exports = {
   updateVip,
   getCurrentlyLoggedInUser,
   getUserById,
+  updateInitialUserProfile,
 };

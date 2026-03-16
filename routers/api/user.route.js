@@ -186,6 +186,65 @@ router
     updateUserProfile,
   );
 
+router.route("/first-time").put(
+  //#swagger.tags = ['Users']
+  //#swagger.summary = 'Update user profile'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.requestBody = {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+                example: 'abc@email.com'
+              },
+              avatarUrl: {
+                type: 'string',
+                example: 'https://example.com/avatar.jpg'
+              },
+              profile: {
+                type: 'object',
+                properties: {
+                  name: {
+                    type: 'string',
+                    example: 'John Doe'
+                  },
+                  gender: {
+                    type: 'number',
+                    example: 1
+                  },
+                  birthday: {
+                    type: 'string',
+                    format: 'date-time',
+                    example: '2025-12-31T23:59:59Z'
+                  },
+                  interest: {
+                    type: 'array',
+                    items: {
+                      type: 'string'
+                    },
+                    example: ['music', 'travel']
+                  },
+                  personalityTags: {
+                    type: 'array',
+                    items: {
+                      type: 'string'
+                    },
+                    example: ['outgoing', 'creative']
+                  }
+                }
+              }
+            },
+          }
+        }
+      }
+    } */
+  updateUserProfile,
+);
+
 router.route("/me").get(
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Get currently logged in user profile'
