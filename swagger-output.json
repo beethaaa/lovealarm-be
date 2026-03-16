@@ -595,6 +595,9 @@
         "summary": "Create a new conversation",
         "description": "",
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Created"
           },
@@ -606,9 +609,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "409": {
-            "description": "Conflict"
           }
         },
         "security": [

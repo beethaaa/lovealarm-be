@@ -191,7 +191,7 @@ const getPartnerInfo = async (req, res) => {
 
     const partnerId = couple.users.find((item) => item !== userId);
     const partner = await User.findById(partnerId).select(
-      "-password -updatedAt -createdAt -__v -setting -vip -isFirstLogin",
+      "-password -updatedAt -createdAt -__v -setting -vip -isFirstLogin -devices",
     );
     if (!partner)
       return res.status(404).json({ message: "Cannot find your partner!" });
