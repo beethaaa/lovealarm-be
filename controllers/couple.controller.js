@@ -189,7 +189,7 @@ const getPartnerInfo = async (req, res) => {
     if (!couple)
       return res.status(403).json({ message: "You are not in couple mode!" });
 
-    const partnerId = couple.users.find((item) => item !== userId);
+    const partnerId = couple.users.find((item) => String(item) !== userId);
     const partner = await User.findById(partnerId).select(
       "-password -updatedAt -createdAt -__v -setting -vip -isFirstLogin -devices",
     );
