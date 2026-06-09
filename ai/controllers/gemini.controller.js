@@ -28,7 +28,7 @@ const getConversationStart = async (req, res) => {
   const { interests } = req.body;
 
   const prompt =
-    (!interests || interests === "")
+    !interests || interests === ""
       ? `
   Role: Dating expert.
   Task: Viết 4 câu bắt chuyện tự nhiên, duyên dáng, không sáo rỗng.
@@ -38,8 +38,7 @@ const getConversationStart = async (req, res) => {
     Không emoji, không ngoặc kép.
     Tránh: Chào em/bạn, làm quen.
   `
-      : 
-  `
+      : `
   
   
   Role: Dating expert.
