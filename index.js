@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
+app.use("/comments", require("./routers/landing-page/comment.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
